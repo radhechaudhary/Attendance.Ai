@@ -18,7 +18,7 @@ const signup = async (req, res) => {
         const query = `INSERT INTO teachers (name, mail, college_name, password) VALUES ($1, $2, $3, $4)`;
         const values = [name, email, collegeName, hashedPassword];
 
-        // await db.query(query, values);
+        await db.query(query, values);
 
         const token = jsonwebtoken.sign({ email, name, collegeName }, process.env.SECRET_KEY)
         res.cookie('authToken', token, {

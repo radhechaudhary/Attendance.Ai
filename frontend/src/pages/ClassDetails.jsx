@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 import {
   ArrowLeft,
   Users,
@@ -21,30 +22,26 @@ const ClassDetails = () => {
   const { classId } = useParams();
   const navigate = useNavigate();
   const classesList = useClassesStore((state) => state.classesList);
+  const [classObj, setClassObj] = useState({ classId: '', section: '', subject: '', schedule: '' })
+  const [students, setStudents] = useState([])
 
   useEffect(() => {
+    // console.log(classesList);
+    const classData = classesList.find(c => c.classId === classId || c.class_id === classId)
     if (!classData) {
       navigate('/dashboard');
+      return;
     }
+    setClassObj(classData);
     (async () => {
-      const res = await axios.get('http://localhost:3000/classes/getStudents', { classId }, { withCredentials: true })
+      const res = await axios.post('http://localhost:3000/classes/getStudents', { classId }, { withCredentials: true })
+      console.log(res.data);
+      setStudents(res.data.students)
 
     })()
   }, [])
 
   // Find the class from the store, or fallback to mock data if it's not found (e.g. direct URL visit or mock setup)
-  const classData = classesList.find(c => c.classId === classId || c.class_id === classId) || {
-    classObj: {
-      subject: 'Sample Class',
-      section: 'SEC-A',
-      schedule: 'Mon, Wed 10:00 AM'
-    },
-    classId: classId
-  };
-
-  const subject = classData.classObj?.subject || classData.subject;
-  const section = classData.classObj?.section || classData.section;
-  const schedule = classData.classObj?.schedule || classData.schedule;
 
   const removeClass = useClassesStore((state) => state.removeClass);
   const fileInputRef = useRef(null);
@@ -71,13 +68,13 @@ const ClassDetails = () => {
   };
 
   // Mock Students Data
-  const [students, setStudents] = useState([
-    { id: 1, name: 'Alice Smith', rollNo: 'CS001', email: 'alice@example.com', status: 'Pending' },
-    { id: 2, name: 'Bob Johnson', rollNo: 'CS002', email: 'bob@example.com', status: 'Pending' },
-    { id: 3, name: 'Charlie Brown', rollNo: 'CS003', email: 'charlie@example.com', status: 'Pending' },
-    { id: 4, name: 'Diana Prince', rollNo: 'CS004', email: 'diana@example.com', status: 'Pending' },
-    { id: 5, name: 'Evan Wright', rollNo: 'CS005', email: 'evan@example.com', status: 'Pending' }
-  ]);
+  // const [students, setStudents] = useState([
+  //   { id: 1, name: 'Alice Smith', rollNo: 'CS001', email: 'alice@example.com', status: 'Absent' },
+  //   { id: 2, name: 'Bob Johnson', rollNo: 'CS002', email: 'bob@example.com', status: 'Absent' },
+  //   { id: 3, name: 'Charlie Brown', rollNo: 'CS003', email: 'charlie@example.com', status: 'Absent' },
+  //   { id: 4, name: 'Diana Prince', rollNo: 'CS004', email: 'diana@example.com', status: 'Absent' },
+  //   { id: 5, name: 'Evan Wright', rollNo: 'CS005', email: 'evan@example.com', status: 'Absent' }
+  // ]);
 
   const handleStatusChange = (studentId, newStatus) => {
     setStudents(students.map(s => s.id === studentId ? { ...s, status: newStatus } : s));
@@ -131,12 +128,12 @@ const ClassDetails = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
               <span className="inline-block px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-blue-400 text-sm font-semibold mb-3">
-                {section}
+                {classObj.section}
               </span>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{subject}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{classObj.subject}</h1>
               <div className="flex items-center text-slate-400 text-sm space-x-4 mb-4">
                 <span className="flex items-center"><Users size={16} className="mr-1.5" /> {students.length} Students</span>
-                <span className="flex items-center"><Clock size={16} className="mr-1.5" /> {schedule || 'No Schedule'}</span>
+                <span className="flex items-center"><Clock size={16} className="mr-1.5" /> {classObj.schedule || 'No Schedule'}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 flex items-center">
@@ -156,13 +153,7 @@ const ClassDetails = () => {
 
             {/* Quick Actions */}
             <div className="flex space-x-4 mt-6 md:mt-0 w-full md:w-auto">
-              <button
-                onClick={() => setIsManualMode(!isManualMode)}
-                className={`flex-1 md:flex-none flex items-center justify-center px-5 py-3 rounded-xl font-medium transition-all ${isManualMode ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/25' : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/25'}`}
-              >
-                <ClipboardList size={18} className="mr-2" />
-                {isManualMode ? 'Done Marking' : 'Manual Attendance'}
-              </button>
+
               <button
                 onClick={() => fileInputRef.current?.click()}
                 className="flex-1 md:flex-none flex items-center justify-center bg-purple-600 hover:bg-purple-500 text-white px-5 py-3 rounded-xl font-medium transition-all shadow-lg shadow-purple-500/25"
@@ -228,7 +219,7 @@ const ClassDetails = () => {
                         </div>
                       </td>
                       <td className="p-5 text-slate-400 font-mono text-sm">{student.rollNo}</td>
-                      <td className="p-5 text-slate-400 text-sm">{student.email}</td>
+                      <td className="p-5 text-slate-400 text-sm">{student.student_id}</td>
                       <td className="p-5">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border ${getStatusColor(student.status)}`}>
                           {student.status === 'Present' && <CheckCircle2 size={12} className="mr-1" />}
@@ -244,13 +235,6 @@ const ClassDetails = () => {
                             title="Mark Present"
                           >
                             <CheckCircle2 size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleStatusChange(student.id, 'Absent')}
-                            className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-md transition-colors"
-                            title="Mark Absent"
-                          >
-                            <XCircle size={18} />
                           </button>
                         </div>
                       </td>
