@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useUserStore from '../store/userStore';
 import useClassesStore from '../store/classesStore';
 import { useEffect } from 'react';
+import axios from 'axios';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -28,6 +29,21 @@ const Dashboard = () => {
       fetchClassesList();
     }
   }, [fetched])
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/user/logout', {}, {
+        withCredentials: true
+      });
+      if (response.status === 200) {
+        localStorage.setItem('loggedIn', 'no');
+        navigate('/login', { replace: true });
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Handle error if needed
+    }
+  };
   const [newClass, setNewClass] = useState({ subject: '', section: '', schedule: '' });
 
   const handleAddClass = async (e) => {
@@ -85,10 +101,10 @@ const Dashboard = () => {
         </nav>
 
         <div className="p-4 border-t border-slate-800">
-          <Link to="/" className="flex items-center px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium transition-colors w-full">
+          <button onClick={handleLogout} className="flex items-center px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium transition-colors w-full">
             <LogOut size={20} className="mr-3" />
             Log Out
-          </Link>
+          </button>
         </div>
       </aside>
 

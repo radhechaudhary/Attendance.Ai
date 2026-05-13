@@ -1,4 +1,6 @@
 import db from "../database/attendance.db.js";
+import axios from 'axios'
+import FormData from "form-data";
 
 const addClass = async (req, res) => {
     const { subject, section, schedule } = req.body
@@ -42,4 +44,54 @@ const getStudents = async (req, res) => {
     }
 }
 
-export { addClass, fetchClassesList, getStudents };
+const markAttendance = async (req, res) => {
+    const { attendanceRecords } = req.body;
+    try {
+        const query = 'INSERT INTO attendance (student_id, class_id, date, status) VALUES ($1, $2, $3, $4) ON CONFLICT (student_id, class_id, date) DO UPDATE SET status = EXCLUDED.status';
+        for (const record of attendanceRecords) {
+            await db.query(query, [record.student_id, record.class_id, record.date, record.status]);
+        }
+        res.json({ status: 'success' }).status(200);
+    } catch (err) {
+        console.log(err);
+        res.json({ status: 'error' }).status(400);
+    }
+}
+
+const photoAttendance = async (req, res) => {
+    const { classId } = req.body
+    const formData = new FormData();
+    // console.log(req.files)
+    for (let file of req.files) {
+        formData.append(
+            "images",
+            file.buffer,
+            {
+                filename: file.originalname,
+                contentType: file.mimetype
+            }
+        );
+    }
+    let embeddings = []
+    try {
+        const embeddingsData = await db.query("select student_id,left_embeddings,right_embeddings,center_embeddings from embeddings where class_id = $1", [classId])
+        embeddings = embeddingsData.rows;
+    }
+    catch (err) {
+        console.log("error");
+        res.json({ status: 'error' }).status(400);
+    }
+    // console.log(embeddings)
+    formData.append("embeddings", JSON.stringify(embeddings));
+    try {
+        let result = await axios.post("http://localhost:5000/match_embeddings", formData, { headers: { ...formData.getHeaders() } })
+        console.log(result.data)
+        res.json({ status: 'success', attendance: result.data }).status(200);
+    }
+    catch (err) {
+        console.log("error");
+        res.json({ status: 'error' }).status(400);
+    }
+}
+
+export { addClass, fetchClassesList, getStudents, markAttendance, photoAttendance };

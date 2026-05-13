@@ -23,6 +23,7 @@ function Protected() {
                     setVerified(true);
                 }
                 else {
+                    localStorage.setItem('loggedIn', 'no');
                     navigate('/login')
                 }
             }

@@ -5,8 +5,14 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../store/userStore';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 const SignupPage = () => {
+    useEffect(() => {
+        if (localStorage.getItem('loggedIn') === 'yess') {
+            navigate('/dashboard', { replace: true });
+        }
+    })
     const navigate = useNavigate();
     const [emailVerified, setEmailVerified] = useState(false);
     const login = useUserStore((state) => state.login)
@@ -49,7 +55,7 @@ const SignupPage = () => {
                     email: email,
                     collegeName: collegeName
                 })
-                navigate("/dashboard");
+                navigate("/dashboard", { replace: true });
             }
         }
         catch (err) {

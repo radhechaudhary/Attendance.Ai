@@ -6,10 +6,8 @@ import {
   ArrowLeft,
   Users,
   Camera,
-  ClipboardList,
   CheckCircle2,
   XCircle,
-  MoreVertical,
   Clock,
   Trash2,
   Copy,
@@ -17,6 +15,7 @@ import {
 } from 'lucide-react';
 import useClassesStore from '../store/classesStore';
 import { useEffect } from 'react';
+import PhotoAttendanceModal from '../components/PhotoAttendanceModal';
 
 const ClassDetails = () => {
   const { classId } = useParams();
@@ -35,7 +34,10 @@ const ClassDetails = () => {
     setClassObj(classData);
     (async () => {
       const res = await axios.post('http://localhost:3000/classes/getStudents', { classId }, { withCredentials: true })
-      console.log(res.data);
+      // console.log(res.data.students);
+      res.data.students.forEach(student => {
+        student.status = "Absent"
+      })
       setStudents(res.data.students)
 
     })()
@@ -45,7 +47,7 @@ const ClassDetails = () => {
 
   const removeClass = useClassesStore((state) => state.removeClass);
   const fileInputRef = useRef(null);
-  const [isManualMode, setIsManualMode] = useState(false);
+  const [photoMode, setPhotoMode] = useState(false);
 
   const handleDeleteClass = () => {
     if (window.confirm("Are you sure you want to delete this class?")) {
@@ -77,7 +79,7 @@ const ClassDetails = () => {
   // ]);
 
   const handleStatusChange = (studentId, newStatus) => {
-    setStudents(students.map(s => s.id === studentId ? { ...s, status: newStatus } : s));
+    setStudents(students.map(s => s.student_id === studentId ? { ...s, status: newStatus } : s));
   };
 
   const getStatusColor = (status) => {
@@ -88,10 +90,34 @@ const ClassDetails = () => {
     }
   };
 
+  const handleSaveAttendance = async () => {
+    try {
+      const date = new Date().toISOString().split('T')[0];
+      const attendanceRecords = students.map(s => ({
+        student_id: s.student_id,
+        class_id: classId,
+        date: date,
+        status: s.status
+      }));
+
+      const res = await axios.post('http://localhost:3000/classes/markAttendance', { attendanceRecords }, { withCredentials: true });
+      if (res.data.status === 'success') {
+        alert('Attendance saved successfully!');
+        navigate('/dashboard');
+      } else {
+        alert('Failed to save attendance');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error saving attendance');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0f172a] text-slate-200 font-sans p-6 sm:p-10 relative overflow-hidden">
       {/* Background blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
+      {photoMode && <PhotoAttendanceModal isOpen={photoMode} onClose={() => setPhotoMode(false)} classId={classId} students={students} setStudents={setStudents} />}
       <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
 
       <div className="max-w-6xl mx-auto relative z-10">
@@ -155,19 +181,12 @@ const ClassDetails = () => {
             <div className="flex space-x-4 mt-6 md:mt-0 w-full md:w-auto">
 
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => setPhotoMode(true)}
                 className="flex-1 md:flex-none flex items-center justify-center bg-purple-600 hover:bg-purple-500 text-white px-5 py-3 rounded-xl font-medium transition-all shadow-lg shadow-purple-500/25"
               >
                 <Camera size={18} className="mr-2" />
                 Photo Attendance
               </button>
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                onChange={handlePhotoUpload}
-                className="hidden"
-              />
             </div>
           </div>
         </motion.div>
@@ -204,7 +223,7 @@ const ClassDetails = () => {
                 <AnimatePresence>
                   {students.map((student) => (
                     <motion.tr
-                      key={student.id}
+                      key={student.student_id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -229,13 +248,23 @@ const ClassDetails = () => {
                       </td>
                       <td className="p-5 text-right">
                         <div className="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => handleStatusChange(student.id, 'Present')}
-                            className="p-1.5 text-slate-400 hover:text-emerald-400 hover:bg-emerald-400/10 rounded-md transition-colors"
-                            title="Mark Present"
-                          >
-                            <CheckCircle2 size={18} />
-                          </button>
+                          {student.status === 'Absent' ? (
+                            <button
+                              onClick={() => handleStatusChange(student.student_id, 'Present')}
+                              className="p-1.5 text-slate-400 hover:text-emerald-400 hover:bg-emerald-400/10 rounded-md transition-colors"
+                              title="Mark Present"
+                            >
+                              <CheckCircle2 size={18} />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleStatusChange(student.student_id, 'Absent')}
+                              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-md transition-colors"
+                              title="Mark Absent"
+                            >
+                              <XCircle size={18} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </motion.tr>
@@ -243,6 +272,17 @@ const ClassDetails = () => {
                 </AnimatePresence>
               </tbody>
             </table>
+          </div>
+
+          {/* Save Attendance Button */}
+          <div className="p-6 border-t border-slate-800 flex justify-end bg-slate-900/50">
+            <button
+              onClick={handleSaveAttendance}
+              className="flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg shadow-emerald-500/25"
+            >
+              <CheckCircle2 size={18} className="mr-2" />
+              Save Attendance
+            </button>
           </div>
         </motion.div>
 
