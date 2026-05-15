@@ -94,4 +94,57 @@ const photoAttendance = async (req, res) => {
     }
 }
 
-export { addClass, fetchClassesList, getStudents, markAttendance, photoAttendance };
+const getClassStudentStats = async (req, res) => {
+    const { classId } = req.body;
+    try {
+        const sessionsQuery = 'SELECT COUNT(DISTINCT date) as total_sessions FROM attendance WHERE class_id = $1';
+        const sessionsData = await db.query(sessionsQuery, [classId]);
+        const totalSessions = parseInt(sessionsData.rows[0].total_sessions) || 0;
+
+        const query = `
+            SELECT 
+            s.student_id, 
+            s.name,
+            COUNT(a.status) FILTER (WHERE a.status = 'Present') AS present_count,
+
+            ARRAY(
+                SELECT status 
+                FROM attendance 
+                WHERE student_id = s.student_id 
+                AND class_id = s.class_id
+                ORDER BY date DESC 
+            ) AS recent_attendance
+
+        FROM students s
+
+        LEFT JOIN attendance a 
+        ON s.student_id = a.student_id 
+        AND s.class_id = a.class_id
+
+        WHERE s.class_id = $1
+
+        GROUP BY s.student_id, s.name, s.class_id;
+        `;
+
+        const data = await db.query(query, [classId]);
+
+        const students = data.rows.map(student => {
+            const presentCount = parseInt(student.present_count);
+            const percentage = totalSessions > 0 ? ((presentCount / totalSessions) * 100).toFixed(2) : "0.00";
+            return {
+                ...student,
+                present_count: presentCount,
+                total_sessions: totalSessions,
+                percentage: percentage
+            };
+        });
+
+        res.json({ status: 'success', students }).status(200);
+    } catch (err) {
+        console.error(err);
+        res.json({ status: 'error' }).status(400);
+    }
+}
+
+export { addClass, fetchClassesList, getStudents, markAttendance, photoAttendance, getClassStudentStats };
+

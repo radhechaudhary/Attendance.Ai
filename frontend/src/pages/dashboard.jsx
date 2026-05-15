@@ -6,6 +6,7 @@ import useUserStore from '../store/userStore';
 import useClassesStore from '../store/classesStore';
 import { useEffect } from 'react';
 import axios from 'axios';
+import Sidebar from '../components/Sidebar';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -30,20 +31,7 @@ const Dashboard = () => {
     }
   }, [fetched])
 
-  const handleLogout = async () => {
-    try {
-      const response = await axios.post('http://localhost:3000/user/logout', {}, {
-        withCredentials: true
-      });
-      if (response.status === 200) {
-        localStorage.setItem('loggedIn', 'no');
-        navigate('/login', { replace: true });
-      }
-    } catch (error) {
-      console.error('Logout failed:', error);
-      // Handle error if needed
-    }
-  };
+
   const [newClass, setNewClass] = useState({ subject: '', section: '', schedule: '' });
 
   const handleAddClass = async (e) => {
@@ -76,37 +64,7 @@ const Dashboard = () => {
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
       <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
 
-      {/* Sidebar */}
-      <aside className="w-64 bg-slate-900/80 backdrop-blur-xl border-r border-slate-800 flex flex-col z-10 hidden md:flex">
-        <div className="h-20 flex items-center px-8 border-b border-slate-800">
-          <BookOpen className="text-blue-500 mr-3" size={28} />
-          <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-            Smart AI
-          </h1>
-        </div>
-
-        <nav className="flex-1 py-8 px-4 space-y-2">
-          <Link to="/dashboard" className="flex items-center px-4 py-3 bg-blue-600/10 text-blue-400 rounded-xl font-medium border border-blue-500/20">
-            <LayoutDashboard size={20} className="mr-3" />
-            Dashboard
-          </Link>
-          <a href="#" className="flex items-center px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl font-medium transition-colors">
-            <Users size={20} className="mr-3" />
-            Students
-          </a>
-          <a href="#" className="flex items-center px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl font-medium transition-colors">
-            <Settings size={20} className="mr-3" />
-            Settings
-          </a>
-        </nav>
-
-        <div className="p-4 border-t border-slate-800">
-          <button onClick={handleLogout} className="flex items-center px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium transition-colors w-full">
-            <LogOut size={20} className="mr-3" />
-            Log Out
-          </button>
-        </div>
-      </aside>
+      <Sidebar />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-y-auto relative z-10 p-6 sm:p-10 hide-scrollbar">
@@ -115,12 +73,12 @@ const Dashboard = () => {
         <header className="flex justify-between items-center mb-12">
           <div>
             <h2 className="text-3xl font-bold text-white mb-2">Welcome,{name}</h2>
-            <p className="text-slate-400">Manage your classes and track attendance seamlessly.</p>
+            <p className="text-slate-400">{collegeName}</p>
           </div>
 
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center overflow-hidden">
-              <span className="text-lg font-bold text-slate-300">JS</span>
+              <span className="text-lg font-bold text-slate-300">{name[0] + name[1]}</span>
             </div>
           </div>
         </header>

@@ -6,6 +6,7 @@ import DashboardPage from './pages/dashboard';
 import Protected from './pages/protected';
 
 import ClassDetails from './pages/ClassDetails';
+import StudentsPage from './pages/Students';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route element={<Protected />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/class/:classId" element={<ClassDetails />} />
+            <Route path="/students" element={<StudentsPage />} />
           </Route>
           {/* Default redirect to login */}
           <Route path="*" element={<Navigate to="/" replace />} />
