@@ -12,7 +12,6 @@ from flask_cors import CORS
 # from dotenv import load_dotenv
 import cv2
 import face_recognition
-import base64
 import json
 
 # load_dotenv() 
@@ -21,9 +20,42 @@ app = Flask(__name__)
 
 app.config['MAX_CONTENT_LENGTH'] = 48 * 1024 * 1024
 
-print(app.config['MAX_CONTENT_LENGTH'])
-
 CORS(app)
+
+
+def get_laplace(file):
+
+    file_bytes = file.read()
+
+    np_arr = np.frombuffer(
+        file_bytes,
+        np.uint8
+    )
+
+    image = cv2.imdecode(
+        np_arr,
+        cv2.IMREAD_COLOR
+    )
+
+    if image is None:
+        return True
+
+    gray = cv2.cvtColor(
+        image,
+        cv2.COLOR_BGR2GRAY
+    )
+
+    laplacian_var = cv2.Laplacian(
+        gray,
+        cv2.CV_64F
+    ).var()
+
+    print(laplacian_var)
+
+    # IMPORTANT
+    file.seek(0)
+
+    return laplacian_var
 
 
 
@@ -37,7 +69,22 @@ def query():
     right = right[0]
     center = center[0]
 
-    
+    if(get_laplace(left) < 80):
+        return {
+            "error": "Image is blurred"
+        }, 400
+
+    if(get_laplace(right) < 80):
+        return {
+            "error": "Image is blurred"
+        }, 400
+
+    if(get_laplace(center) < 80):
+        return {
+            "error": "Image is blurred"
+        }, 400
+
+
     left_image = face_recognition.load_image_file(left)
     right_image = face_recognition.load_image_file(right)
     center_image = face_recognition.load_image_file(center)

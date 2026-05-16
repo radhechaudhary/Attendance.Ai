@@ -29,6 +29,8 @@ function Protected() {
             }
             catch (err) {
                 console.log(err)
+                localStorage.setItem('loggedIn', 'no');
+                navigate('/login')
             }
         })();
     }, [])

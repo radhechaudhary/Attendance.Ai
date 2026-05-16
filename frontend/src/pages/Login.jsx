@@ -7,12 +7,14 @@ import useUserStore from '../store/userStore';
 import { useEffect } from 'react';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   useEffect(() => {
+    // localStorage.setItem('loggedIn', 'no')
     if (localStorage.getItem('loggedIn') === 'yess') {
       navigate('/dashboard', { replace: true });
     }
-  })
-  const navigate = useNavigate();
+  }, [])
+
   const login = useUserStore((state) => state.login);
   const [activeTab, setActiveTab] = useState('student'); // 'student' or 'teacher'
   const [images, setImages] = useState({

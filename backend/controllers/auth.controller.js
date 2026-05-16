@@ -5,6 +5,8 @@ dotenv.config();
 const auth = (req, res) => {
     const token = req.cookies.authToken;
     const secretKey = process.env.SECRET_KEY;
+    console.log(token);
+    console.log("-----------------------");
 
     if (!token) return res.status(403).json({
         msg: "No token present"
