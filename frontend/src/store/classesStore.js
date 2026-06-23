@@ -18,7 +18,6 @@ const useClassesStore = create((set) => ({
 
     addClass: async (classObj) => {
         try {
-            console.log("classOBj : ", classObj)
             const res = await axios.post('http://localhost:3000/classes/addClass', { section: classObj.section, subject: classObj.subject }, { withCredentials: true });
             if (res.status === 200) {
                 set((state) => ({ classesList: [...state.classesList, { ...classObj, classId: res.data.classId }] }))

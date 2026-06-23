@@ -37,6 +37,44 @@ An AI-powered smart attendance management system built to automate student atten
 ### Database
 - PostgreSQL
 
+### Getting Started
+```bash
+git clone https://github.com/radhechaudhary/smart_ai_attendance.git
+cd AttendanceManager
+
+# Install backend dependencies
+cd backend
+npm install
+
+# Start backend
+create .env file and add the following lines:
+DB_PASSWORD = "PASSWORD"
+DB_PORT = PORT
+DB_HOST = "HOST"
+DB_USER = "NAME" 
+DB_NAME = "DB_NAME"
+SECRET_KEY = "SECRET KEY"
+
+
+npm run dev
+
+# Install frontend dependencies
+cd ../frontend
+npm install
+
+# Start frontend
+npm run dev
+
+# Start Model
+
+cd model
+pip install -r requirements.txt
+
+gunicorn --workers 4 --bind [IP_ADDRESS]:5001 app:app
+
+```
+
+
 ### Screenshots
 <img src="project_SS/ss1.png" alt="">
 <img src="project_SS/ss2.png" alt="">
