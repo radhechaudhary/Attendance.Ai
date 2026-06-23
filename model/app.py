@@ -9,18 +9,17 @@ import re
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 # pyrefly: ignore [missing-import]
-# from dotenv import load_dotenv
 import cv2
+# pyrefly: ignore [missing-import]
 import face_recognition
 import json
 
-# load_dotenv() 
 
 app = Flask(__name__)
 
 app.config['MAX_CONTENT_LENGTH'] = 48 * 1024 * 1024
 
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, methods=["POST", "GET"])
 
 
 def get_laplace(file):
@@ -57,7 +56,11 @@ def get_laplace(file):
 
     return laplacian_var
 
-
+@app.route('/', methods=["GET"])
+def get():
+    return {
+        "message": "Welcome to the Smart AI Attendance Model"
+    }, 200
 
 @app.route('/generate_embeddings', methods=["POST"])
 def query():
@@ -218,8 +221,5 @@ def match_embeddings():
 
     return jsonify(status)
     
-
-if __name__ == "__main__":
-    app.run(debug=True)
 
 
