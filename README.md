@@ -70,7 +70,7 @@ npm run dev
 cd model
 pip install -r requirements.txt
 
-gunicorn --workers 4 --bind [IP_ADDRESS]:5001 app:app
+gunicorn --workers 4 --bind 0.0.0.0:5001 app:app
 
 ```
 
