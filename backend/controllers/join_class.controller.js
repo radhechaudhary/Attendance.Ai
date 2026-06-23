@@ -2,7 +2,7 @@ import db from "../database/attendance.db.js";
 import axios from 'axios'
 import FormData from "form-data";
 
-const MODEL_API_URL = "http://127.0.0.1:5000/generate_embeddings"
+const MODEL_API_URL = "http://0.0.0.0:5001/generate_embeddings"
 
 
 const joinClass = async (req, res) => {

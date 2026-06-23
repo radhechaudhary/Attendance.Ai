@@ -84,7 +84,7 @@ const photoAttendance = async (req, res) => {
     // console.log(embeddings)
     formData.append("embeddings", JSON.stringify(embeddings));
     try {
-        let result = await axios.post("http://localhost:5000/match_embeddings", formData, { headers: { ...formData.getHeaders() } })
+        let result = await axios.post("http://0.0.0.0:5001/match_embeddings", formData, { headers: { ...formData.getHeaders() } })
         console.log(result.data)
         res.json({ status: 'success', attendance: result.data }).status(200);
     }
