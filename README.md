@@ -1,4 +1,4 @@
-# Smart AI Attendance System
+# Attendance.Ai
 
 An AI-powered smart attendance management system built to automate student attendance tracking using modern web technologies and intelligent processing.
 
