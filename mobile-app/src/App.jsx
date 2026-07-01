@@ -13,6 +13,7 @@ function App() {
     <Router>
       <div className="w-full min-h-screen">
         <Routes>
+          {/* <Route path='/' element={<DashboardPage />} /> */}
           <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route element={<Protected />}>

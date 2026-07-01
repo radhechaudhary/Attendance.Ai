@@ -5,6 +5,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import useUserStore from '../store/userStore';
 import { useEffect } from 'react';
+import { open } from "@tauri-apps/plugin-dialog";
+import { readFile } from "@tauri-apps/plugin-fs";
+
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -31,8 +34,8 @@ const LoginPage = () => {
     centre: useRef(null)
   };
 
-  const handleImageChange = (e, angle) => {
-    const file = e.target.files[0];
+  const handleImageChange = (file, angle) => {
+    // const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -45,9 +48,34 @@ const LoginPage = () => {
     }
   };
 
-  const triggerFileInput = (angle) => {
-    fileInputRefs[angle].current.click();
-  };
+  const addPhoto = async (angle) => {
+    const path = await open({
+      multiple: false,
+      filters: [
+        {
+          name: "Images",
+          extensions: ["png", "jpg", "jpeg"]
+        }
+      ]
+    });
+    if (!path) return;
+
+    const bytes = await readFile(path);
+
+
+    const blob = new Blob([bytes], {
+      type: "image/jpeg"
+    });
+
+    const file = new File(
+      [blob],
+      path.split("/").pop(),
+      {
+        type: blob.type
+      }
+    );
+    handleImageChange(file, angle);
+  }
 
   const handleStudentSubmit = async (e) => {
     e.preventDefault();
@@ -212,7 +240,7 @@ const LoginPage = () => {
                       <div key={angle} className="flex flex-col items-center">
                         <div
                           className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-800 border-2 border-dashed border-slate-600 flex items-center justify-center cursor-pointer overflow-hidden group transition-all duration-300 hover:border-blue-500"
-                          onClick={() => triggerFileInput(angle)}
+                          onClick={() => addPhoto(angle)}
                         >
                           {images[angle].preview ? (
                             <>
@@ -228,13 +256,6 @@ const LoginPage = () => {
                             </div>
                           )}
                         </div>
-                        <input
-                          type="file"
-                          ref={fileInputRefs[angle]}
-                          onChange={(e) => handleImageChange(e, angle)}
-                          accept="image/*"
-                          className="hidden"
-                        />
                       </div>
                     ))}
                   </div>

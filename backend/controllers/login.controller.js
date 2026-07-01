@@ -37,9 +37,9 @@ const login = async (req, res) => {
 
         const token = jsonwebtoken.sign({ email, name: user.name, collegeName: user.college_name }, process.env.SECRET_KEY)
         res.cookie('authToken', token, {
-            httpOnly: true,
-            secure: true,    // true only for HTTPS
-            sameSite: 'none', // 👈 allows cross-site cookies
+            httpOnly: false,
+            secure: false,    // true only for HTTPS
+            sameSite: 'lax', // 👈 allows cross-site cookies
             path: '/',
         });
         res.status(200).json({ name: user.name, collegeName: user.collegeName, email, status: 'success' });

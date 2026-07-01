@@ -14,6 +14,7 @@ function Protected() {
         (async () => {
             try {
                 const res = await axios.post('http://localhost:3000/user/auth', {}, { withCredentials: true })
+                console.log(res)
                 if (res.status == 200) {
                     login({
                         name: res.data.name,
