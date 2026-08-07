@@ -106,6 +106,8 @@ def query():
             "error": "Image is blurred"
         }, 400
 
+    
+
 
     left_image = face_recognition.load_image_file(left)
     right_image = face_recognition.load_image_file(right)
@@ -160,12 +162,12 @@ def match_embeddings():
     embeddings = []
 
     for file in files:
-        print(type(file))
-        image = face_recognition.load_image_file(file)
-        if(get_laplace(file) < 80):
-            print("Left image is blurred")
+        print(file)
+       
+        if(get_laplace(file) < 60):
+            print("Image is blurred")
             continue
-        
+        image = face_recognition.load_image_file(file)
         locations = face_recognition.face_locations(
             image,
             model="hog"

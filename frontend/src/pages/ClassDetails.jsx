@@ -57,6 +57,7 @@ const ClassDetails = () => {
   };
 
   const copyToClipboard = (text, type) => {
+
     navigator.clipboard.writeText(text);
     alert(`${type} copied to clipboard!`);
   };
@@ -170,7 +171,7 @@ const ClassDetails = () => {
                 </div>
                 <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 flex items-center">
                   <span className="text-xs text-slate-400 mr-2">Invite Link</span>
-                  <button onClick={() => copyToClipboard(`${window.location.origin}/class/${classId}`, 'Invite Link')} className="text-slate-500 hover:text-blue-400 transition-colors" title="Copy Link">
+                  <button onClick={() => copyToClipboard(`${window.location.origin}/login?tab=student&classId=${classId}`, 'Invite Link')} className="text-slate-500 hover:text-blue-400 transition-colors" title="Copy Link">
                     <LinkIcon size={14} />
                   </button>
                 </div>
@@ -247,7 +248,7 @@ const ClassDetails = () => {
                           {student.status}
                         </span>
                       </td>
-                      <td className="p-5 text-slate-400 text-sm">{student.confidence + " %"}</td>
+                      <td className="p-5 text-slate-400 text-sm">{student.confidence || "0.0"}%</td>
                       <td className="p-5 text-right">
                         <div className="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {student.status === 'Absent' ? (

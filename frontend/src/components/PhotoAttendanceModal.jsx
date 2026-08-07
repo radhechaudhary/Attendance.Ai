@@ -209,7 +209,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
           const newStudents = students.map(student => {
             if (student.status === 'Present' || res.data.attendance.status[student.student_id]) {
               student.status = 'Present';
-              student.confidence = Math.max(student.confidence || 0, res.data.attendance.confidence[student.student_id]);
+              student.confidence = Math.max(student.confidence || 0, res.data.attendance.confidence[student.student_id] || 0);
             } else {
               student.status = 'Absent';
             }

@@ -1,22 +1,32 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GraduationCap, Mail, Lock, ArrowRight, Camera, BookOpen, Upload, User, KeyRound, CheckCircle, AlertCircle } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import useUserStore from '../store/userStore';
 import { useEffect } from 'react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const classCodeParam = searchParams.get('classId');
+
+  const login = useUserStore((state) => state.login);
+  const [activeTab, setActiveTab] = useState('student'); // 'student' or 'teacher'
+
   useEffect(() => {
     // localStorage.setItem('loggedIn', 'no')
     if (localStorage.getItem('loggedIn') === 'yess') {
       navigate('/dashboard', { replace: true });
     }
-  }, [])
+  }, []);
 
-  const login = useUserStore((state) => state.login);
-  const [activeTab, setActiveTab] = useState('student'); // 'student' or 'teacher'
+  useEffect(() => {
+    if (tabParam === 'teacher' || tabParam === 'student') {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
   const [images, setImages] = useState({
     left: { file: null, preview: null },
     right: { file: null, preview: null },
@@ -283,6 +293,7 @@ const LoginPage = () => {
                           <KeyRound size={18} className="text-slate-500" />
                         </div>
                         <input
+                          value={classCodeParam ? classCodeParam : ''}
                           type="text"
                           name="classCode"
                           className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500 uppercase font-mono"
