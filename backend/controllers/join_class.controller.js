@@ -1,8 +1,10 @@
 import db from "../database/attendance.db.js";
 import axios from 'axios'
 import FormData from "form-data";
+import dotenv from "dotenv";
+dotenv.config();
 
-const MODEL_API_URL = "http://0.0.0.0:5001/generate_embeddings"
+const MODEL_API_URL = process.env.MODEL_API_URL
 
 
 const joinClass = async (req, res) => {
@@ -34,7 +36,7 @@ const joinClass = async (req, res) => {
         console.log("Here<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         let result;
         try {
-            result = await axios.post(MODEL_API_URL, formData, { headers: { ...formData.getHeaders() } });
+            result = await axios.post(`${MODEL_API_URL}/generate_embeddings`, formData, { headers: { ...formData.getHeaders() } });
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
             console.log(result.data.embeddings[0])
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")

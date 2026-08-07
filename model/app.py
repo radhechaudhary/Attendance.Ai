@@ -49,12 +49,28 @@ def get_laplace(file):
         cv2.CV_64F
     ).var()
 
-    print(laplacian_var)
-
-    # IMPORTANT
     file.seek(0)
 
     return laplacian_var
+
+def checkFaceOccupiesEnoughSpace(image):
+    locations = face_recognition.face_locations(image)
+
+    top, right, bottom, left = locations[0]
+
+    face_width = right - left
+    face_height = bottom - top
+
+    img_height, img_width = image.shape[:2]
+
+    face_area = face_width * face_height
+    image_area = img_width * img_height
+
+    ratio = face_area / image_area
+
+    if ratio < 0.10:      # example threshold (10%)
+        return False
+    return True
 
 @app.route('/', methods=["GET"])
 def get():
@@ -72,17 +88,20 @@ def query():
     right = right[0]
     center = center[0]
 
-    if(get_laplace(left) < 80):
+    if(get_laplace(left) < 60):
+        print("Left image is blurred")
         return {
             "error": "Image is blurred"
         }, 400
 
-    if(get_laplace(right) < 80):
+    if(get_laplace(right) < 60):
+        print("Right image is blurred")
         return {
             "error": "Image is blurred"
         }, 400
 
-    if(get_laplace(center) < 80):
+    if(get_laplace(center) < 60):
+        print("Center image is blurred")
         return {
             "error": "Image is blurred"
         }, 400
@@ -91,6 +110,15 @@ def query():
     left_image = face_recognition.load_image_file(left)
     right_image = face_recognition.load_image_file(right)
     center_image = face_recognition.load_image_file(center)
+
+    if(checkFaceOccupiesEnoughSpace(left_image) == False or checkFaceOccupiesEnoughSpace(right_image) == False or checkFaceOccupiesEnoughSpace(center_image) == False   ):
+        return {
+            "error": "Move closer to the camera."
+        }, 400
+ 
+    
+    
+
 
     left_encodings = face_recognition.face_encodings(left_image, face_recognition.face_locations(left_image, model="hog"))
     right_encodings = face_recognition.face_encodings(right_image, face_recognition.face_locations(right_image, model="hog"))
@@ -134,12 +162,10 @@ def match_embeddings():
     for file in files:
         print(type(file))
         image = face_recognition.load_image_file(file)
+        if(get_laplace(file) < 80):
+            print("Left image is blurred")
+            continue
         
-        print(">..........>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-        # print(type(image))
-        # print(image.shape)
-        # print(image.dtype)
-        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
         locations = face_recognition.face_locations(
             image,
             model="hog"
@@ -163,6 +189,7 @@ def match_embeddings():
     
 
     status = {}
+    confidence = {}
 
     THRESHOLD = 0.55
 
@@ -216,10 +243,22 @@ def match_embeddings():
                 matched_student = saved_embedding['student_id']
 
             if best_distance < THRESHOLD:
-
+                print("found")
                 status[matched_student] = "Present"
+                if(confidence.get(matched_student, 0) < (1 - best_distance)*100):
+                    confidence[matched_student] = (1 - best_distance)*100
 
-    return jsonify(status)
+    return jsonify({
+        'status': status,
+        'confidence': confidence
+    })
+
+
+if(__name__ == "__main__"):
+    app.run(
+        debug=True,
+        port=5001
+    )
     
 
 

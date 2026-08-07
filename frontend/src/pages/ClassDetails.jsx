@@ -216,6 +216,7 @@ const ClassDetails = () => {
                   <th className="p-5 font-medium border-b border-slate-800">Roll No</th>
                   <th className="p-5 font-medium border-b border-slate-800">Email ID</th>
                   <th className="p-5 font-medium border-b border-slate-800">Status</th>
+                  <th className="p-5 font-medium border-b border-slate-800">Confidence</th>
                   <th className="p-5 font-medium border-b border-slate-800 text-right">Actions</th>
                 </tr>
               </thead>
@@ -246,6 +247,7 @@ const ClassDetails = () => {
                           {student.status}
                         </span>
                       </td>
+                      <td className="p-5 text-slate-400 text-sm">{student.confidence + " %"}</td>
                       <td className="p-5 text-right">
                         <div className="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {student.status === 'Absent' ? (

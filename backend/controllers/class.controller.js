@@ -1,6 +1,10 @@
 import db from "../database/attendance.db.js";
 import axios from 'axios'
 import FormData from "form-data";
+import dotenv from "dotenv";
+dotenv.config();
+
+const MODEL_API_URL = process.env.MODEL_API_URL
 
 const addClass = async (req, res) => {
     const { subject, section, schedule } = req.body
@@ -84,7 +88,7 @@ const photoAttendance = async (req, res) => {
     // console.log(embeddings)
     formData.append("embeddings", JSON.stringify(embeddings));
     try {
-        let result = await axios.post("http://0.0.0.0:5001/match_embeddings", formData, { headers: { ...formData.getHeaders() } })
+        let result = await axios.post(`${MODEL_API_URL}/match_embeddings`, formData, { headers: { ...formData.getHeaders() } })
         console.log(result.data)
         res.json({ status: 'success', attendance: result.data }).status(200);
     }
