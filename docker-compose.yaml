@@ -1,0 +1,63 @@
+services:
+  backend:
+    build: ./backend
+    depends_on:
+      - migration
+
+    volumes:
+      - ./backend:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_PASSWORD=Radhe@1234
+      - DB_PORT=5432
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_NAME=attendance
+
+      - SECRET_KEY=knnfiyt8ugrhh49
+
+      - REDIS_URL=redis://redis-cache:6379/
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL= http://backend:3000
+
+  model:
+    build: ./model
+    volumes:
+      - ./model:/app
+    ports:
+      - "5000:5000"
+  postgres:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Radhe@1234
+      - POSTGRES_DB=attendance
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d attendance" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  migration:
+    build: ./backend
+    command: npx node-pg-migrate up
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      - DATABASE_URL=postgres://postgres:Radhe@1234@postgres:5432/attendance
+volumes:
+  pg_data:

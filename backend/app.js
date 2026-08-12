@@ -4,7 +4,7 @@ import cors from 'cors';
 
 const app = express();
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:1420"], // frontend URL
+    origin: ["*", "http://localhost:5173", "http://frontend:5173", "http://localhost:5174", "http://frontend:5174"], // frontend URL
     credentials: true                // allow cookies
 }));
 app.use(cookieParser());
