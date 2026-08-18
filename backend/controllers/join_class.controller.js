@@ -47,7 +47,7 @@ const joinClass = async (req, res) => {
             res.status(400).json({ status: 'error', error: err.response.data.error })
             return;
         }
-        await db.query("insert into students (student_id,name, class_id) values ($1, $2, $3)", [email, name, classCode])
+        await db.query("insert into students (student_id,name, class_id, roll_no) values ($1, $2, $3, $4)", [email, name, classCode, 123])
         await db.query("update classes set students = students + 1 where class_id = $1", [classCode]);
         // await db.query("INSERT INTO attendance (student_id, class_id, date, status) VALUES ($1, $2, $3, $4) ON CONFLICT (student_id, class_id, date) DO UPDATE SET status = EXCLUDED.status", [email, classCode, new Date().toISOString().split('T')[0], "Absent"]);
         await db.query("insert into embeddings (student_id, class_id, left_embeddings, right_embeddings, center_embeddings) values ($1, $2, $3, $4, $5)", [email, classCode, result.data.embeddings[0], result.data.embeddings[1], result.data.embeddings[2]]);
