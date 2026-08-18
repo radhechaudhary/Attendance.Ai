@@ -88,24 +88,23 @@ def query():
     right = right[0]
     center = center[0]
 
-    if(get_laplace(left) < 60):
+    if(get_laplace(left) < 30):
         print("Left image is blurred")
         return {
-            "error": "Image is blurred"
+            "error": "Left Image is blurred"
         }, 400
 
-    if(get_laplace(right) < 60):
+    if(get_laplace(right) < 30):
         print("Right image is blurred")
         return {
-            "error": "Image is blurred"
+            "error": "Right Image is blurred"
         }, 400
 
-    if(get_laplace(center) < 60):
+    if(get_laplace(center) < 30):
         print("Center image is blurred")
         return {
-            "error": "Image is blurred"
+            "error": "Center Image is blurred"
         }, 400
-
     
 
 
@@ -164,7 +163,7 @@ def match_embeddings():
     for file in files:
         print(file)
        
-        if(get_laplace(file) < 60):
+        if(get_laplace(file) < 30):
             print("Image is blurred")
             continue
         image = face_recognition.load_image_file(file)
