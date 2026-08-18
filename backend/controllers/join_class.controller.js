@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const MODEL_API_URL = process.env.MODEL_API_URL
+console.log("MODEL_API_URL", MODEL_API_URL)
 
 
 const joinClass = async (req, res) => {
