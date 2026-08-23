@@ -3,5 +3,6 @@ numpy
 Pillow
 opencv-python-headless
 flask_cors
-insightface
-onnxruntime-gpu
+face_recognition
+https://github.com/ageitgey/face_recognition_models/archive/refs/heads/master.zip
+setuptools

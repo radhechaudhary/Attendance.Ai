@@ -1,0 +1,38 @@
+name: attendance_ai_app
+description: Attendance.Ai native Android client (Flutter) - talks to the existing Node/Express + Flask face-recognition backend.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+
+  # Networking - dio + cookie jar so we can reuse the existing cookie (authToken)
+  # based auth on the Node backend with zero backend changes.
+  dio: ^5.4.3+1
+  cookie_jar: ^4.0.8
+  dio_cookie_manager: ^3.1.1
+  path_provider: ^2.1.3
+
+  # State management
+  provider: ^6.1.2
+
+  # Camera / gallery capture for face enrollment + photo attendance
+  image_picker: ^1.1.2
+
+  # Charts for attendance analytics tab
+  fl_chart: ^0.68.0
+
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

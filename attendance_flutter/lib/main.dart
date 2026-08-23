@@ -1,0 +1,34 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'providers/auth_provider.dart';
+import 'providers/class_provider.dart';
+import 'screens/splash_screen.dart';
+import 'services/api_client.dart';
+import 'theme/app_theme.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ApiClient.instance.init();
+  runApp(const AttendanceAiApp());
+}
+
+class AttendanceAiApp extends StatelessWidget {
+  const AttendanceAiApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ClassProvider()),
+      ],
+      child: MaterialApp(
+        title: 'Attendance.Ai',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        home: const SplashScreen(),
+      ),
+    );
+  }
+}
