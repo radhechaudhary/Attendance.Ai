@@ -35,6 +35,13 @@ services:
       - ./model:/app
     ports:
       - "5000:5000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
   postgres:
     image: postgres:17
     environment:
@@ -49,7 +56,8 @@ services:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d attendance" ]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
   migration:
     build: ./backend
     command: npx node-pg-migrate up
