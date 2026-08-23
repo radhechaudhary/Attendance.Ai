@@ -20,6 +20,9 @@ app.use('/classes', classRoute)
 import studentRoute from './routes/student.route.js';
 app.use('/student', studentRoute)
 
+import roomRoute from './routes/room.route.js';
+app.use('/rooms', roomRoute)
+
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
 });

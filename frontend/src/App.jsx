@@ -10,6 +10,7 @@ import ClassDetails from './pages/ClassDetails';
 import StudentsPage from './pages/Students';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentClassDetails from './pages/StudentClassDetails';
+import Rooms from './pages/Rooms';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/class/:classId" element={<ClassDetails />} />
             <Route path="/students" element={<StudentsPage />} />
+            <Route path="/rooms" element={<Rooms />} />
           </Route>
           <Route element={<Protected allowedRole="student" />}>
             <Route path="/student/dashboard" element={<StudentDashboard />} />

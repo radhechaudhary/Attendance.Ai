@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BookOpen, LayoutDashboard, Users, Settings, LogOut } from 'lucide-react';
+import { BookOpen, LayoutDashboard, Users, Settings, LogOut, DoorOpen } from 'lucide-react';
 import axios from 'axios';
 import useUserStore from '../store/userStore';
 import ThemeToggle from './ThemeToggle';
@@ -32,6 +32,7 @@ const Sidebar = () => {
     : [
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
         { name: 'Students', icon: Users, path: '/students' },
+        { name: 'Rooms', icon: DoorOpen, path: '/rooms' },
         { name: 'Settings', icon: Settings, path: '/settings' },
       ];
 

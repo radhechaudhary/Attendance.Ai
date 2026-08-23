@@ -11,9 +11,14 @@ import {
   Clock,
   Trash2,
   Copy,
-  Link as LinkIcon
+  Link as LinkIcon,
+  DoorOpen,
+  Loader2,
+  AlertCircle,
+  X
 } from 'lucide-react';
 import useClassesStore from '../store/classesStore';
+import useRoomsStore from '../store/roomsStore';
 import { useEffect } from 'react';
 import PhotoAttendanceModal from '../components/PhotoAttendanceModal';
 
@@ -21,8 +26,27 @@ const ClassDetails = () => {
   const { classId } = useParams();
   const navigate = useNavigate();
   const classesList = useClassesStore((state) => state.classesList);
+  const rooms = useRoomsStore((state) => state.roomsList);
+  const fetchRoomsList = useRoomsStore((state) => state.fetchRoomsList);
+  const roomsFetched = useRoomsStore((state) => state.fetched);
+  const addRoom = useRoomsStore((state) => state.addRoom);
   const [classObj, setClassObj] = useState({ classId: '', section: '', subject: '', schedule: '' })
   const [students, setStudents] = useState([])
+  const [roomId, setRoomId] = useState('')
+  const [isCapturing, setIsCapturing] = useState(false)
+  const [captureMessage, setCaptureMessage] = useState(null)
+  const [isAddRoomModalOpen, setIsAddRoomModalOpen] = useState(false)
+  const [roomClaim, setRoomClaim] = useState({ room_id: '', camera_password: '', room_name: '' })
+  const [roomClaimError, setRoomClaimError] = useState('')
+  const [isClaimingRoom, setIsClaimingRoom] = useState(false)
+
+  const ADD_ROOM_OPTION = '__add_room__';
+
+  useEffect(() => {
+    if (!roomsFetched) {
+      fetchRoomsList();
+    }
+  }, [roomsFetched])
 
   useEffect(() => {
     // console.log(classesList);
@@ -32,6 +56,7 @@ const ClassDetails = () => {
       return;
     }
     setClassObj(classData);
+    setRoomId(classData.room_id || '');
     (async () => {
       const res = await axios.post('http://localhost:3000/classes/getStudents', { classId }, { withCredentials: true })
       // console.log(res.data.students);
@@ -42,6 +67,67 @@ const ClassDetails = () => {
 
     })()
   }, [])
+
+  const persistRoomAssignment = async (newRoomId) => {
+    setRoomId(newRoomId);
+    try {
+      await axios.post('http://localhost:3000/classes/assignRoom', { classId, roomId: newRoomId || null }, { withCredentials: true });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAssignRoom = (e) => {
+    const value = e.target.value;
+    if (value === ADD_ROOM_OPTION) {
+      setRoomClaim({ room_id: '', camera_password: '', room_name: '' });
+      setRoomClaimError('');
+      setIsAddRoomModalOpen(true);
+      return;
+    }
+    persistRoomAssignment(value);
+  };
+
+  const handleClaimRoom = async (e) => {
+    e.preventDefault();
+    setRoomClaimError('');
+    setIsClaimingRoom(true);
+    try {
+      const result = await addRoom(roomClaim);
+      if (result.status === 'success') {
+        setIsAddRoomModalOpen(false);
+        await persistRoomAssignment(roomClaim.room_id);
+      } else {
+        setRoomClaimError(result.message || 'Could not add this room.');
+      }
+    } finally {
+      setIsClaimingRoom(false);
+    }
+  };
+
+  const handleAutoCapture = async () => {
+    setIsCapturing(true);
+    setCaptureMessage(null);
+    try {
+      const res = await axios.post('http://localhost:3000/classes/autoCaptureAttendance', { classId }, { withCredentials: true });
+      if (res.data.status === 'success') {
+        const { status = {}, confidence = {} } = res.data.attendance || {};
+        setStudents(students.map(student => ({
+          ...student,
+          status: status[student.student_id] ? 'Present' : 'Absent',
+          confidence: confidence[student.student_id] || 0,
+        })));
+        setCaptureMessage({ type: 'success', text: `Attendance captured: ${res.data.presentCount} / ${res.data.totalStudents} present.` });
+      } else {
+        setCaptureMessage({ type: 'error', text: res.data.message || 'Could not capture attendance.' });
+      }
+    } catch (err) {
+      console.error(err);
+      setCaptureMessage({ type: 'error', text: err.response?.data?.message || 'Could not capture attendance.' });
+    } finally {
+      setIsCapturing(false);
+    }
+  };
 
   // Find the class from the store, or fallback to mock data if it's not found (e.g. direct URL visit or mock setup)
 
@@ -119,6 +205,107 @@ const ClassDetails = () => {
       {/* Background blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
       {photoMode && <PhotoAttendanceModal isOpen={photoMode} onClose={() => setPhotoMode(false)} classId={classId} students={students} setStudents={setStudents} />}
+      <AnimatePresence>
+        {isAddRoomModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl relative"
+            >
+              <button
+                onClick={() => setIsAddRoomModalOpen(false)}
+                className="absolute top-6 right-6 text-slate-400 hover:text-slate-50 transition-colors"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="mb-8">
+                <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center mb-4 text-blue-400">
+                  <DoorOpen size={24} />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-50 mb-2">Add a Room</h3>
+                <p className="text-slate-400 text-sm">Enter the Room ID and password given to you for that room's camera, and pick a name for it.</p>
+              </div>
+
+              <form onSubmit={handleClaimRoom} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Room ID</label>
+                  <input
+                    type="text"
+                    value={roomClaim.room_id}
+                    onChange={(e) => setRoomClaim({ ...roomClaim, room_id: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 transition-colors font-mono"
+                    placeholder="e.g. 204"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Room Password</label>
+                  <input
+                    type="password"
+                    value={roomClaim.camera_password}
+                    onChange={(e) => setRoomClaim({ ...roomClaim, camera_password: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 transition-colors"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Alias Name</label>
+                  <input
+                    type="text"
+                    value={roomClaim.room_name}
+                    onChange={(e) => setRoomClaim({ ...roomClaim, room_name: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 transition-colors"
+                    placeholder="e.g. Lab 204"
+                    required
+                  />
+                </div>
+
+                <AnimatePresence>
+                  {roomClaimError && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-3 rounded-xl text-xs flex items-center space-x-2"
+                    >
+                      <AlertCircle size={14} />
+                      <span>{roomClaimError}</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="pt-2 flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddRoomModalOpen(false)}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-50 font-medium rounded-xl text-sm px-5 py-3.5 text-center transition-colors border border-slate-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isClaimingRoom}
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:opacity-70 text-white font-medium rounded-xl text-sm px-5 py-3.5 text-center transition-colors shadow-lg shadow-blue-500/25"
+                  >
+                    {isClaimingRoom ? 'Adding...' : 'Add Room'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
 
       <div className="max-w-6xl mx-auto relative z-10">
@@ -175,11 +362,35 @@ const ClassDetails = () => {
                     <LinkIcon size={14} />
                   </button>
                 </div>
+                <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 flex items-center">
+                  <DoorOpen size={14} className="text-slate-500 mr-2" />
+                  <select
+                    value={roomId}
+                    onChange={handleAssignRoom}
+                    className="bg-transparent text-xs text-slate-300 focus:outline-none cursor-pointer max-w-[140px]"
+                  >
+                    <option value="" className="bg-slate-800">No room assigned</option>
+                    {rooms.map((r) => (
+                      <option key={r.room_id} value={r.room_id} className="bg-slate-800">{r.room_name}</option>
+                    ))}
+                    <option value={ADD_ROOM_OPTION} className="bg-slate-800 text-blue-400">+ Add a Room</option>
+                  </select>
+                </div>
               </div>
             </div>
 
             {/* Quick Actions */}
             <div className="flex space-x-4 mt-6 md:mt-0 w-full md:w-auto">
+
+              <button
+                onClick={handleAutoCapture}
+                disabled={!roomId || isCapturing}
+                title={!roomId ? 'Assign a room with a camera first' : 'Capture a photo from the room camera and mark attendance'}
+                className="flex-1 md:flex-none flex items-center justify-center bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-5 py-3 rounded-xl font-medium transition-all shadow-lg shadow-blue-500/25"
+              >
+                {isCapturing ? <Loader2 size={18} className="mr-2 animate-spin" /> : <Camera size={18} className="mr-2" />}
+                {isCapturing ? 'Capturing...' : 'Take Attendance'}
+              </button>
 
               <button
                 onClick={() => setPhotoMode(true)}
@@ -190,6 +401,23 @@ const ClassDetails = () => {
               </button>
             </div>
           </div>
+
+          <AnimatePresence>
+            {captureMessage && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className={`mt-6 p-3 rounded-xl text-sm flex items-center ${captureMessage.type === 'success'
+                  ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+                  : 'bg-rose-500/10 border border-rose-500/20 text-rose-400'
+                  }`}
+              >
+                {captureMessage.type === 'success' ? <CheckCircle2 size={16} className="mr-2 flex-shrink-0" /> : <AlertCircle size={16} className="mr-2 flex-shrink-0" />}
+                {captureMessage.text}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Students List */}

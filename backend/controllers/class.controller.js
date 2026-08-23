@@ -22,7 +22,12 @@ const addClass = async (req, res) => {
 }
 
 const fetchClassesList = async (req, res) => {
-    const query = 'select class_id, subject, section, students from classes where teacher_id = $1';
+    const query = `
+        select c.class_id, c.subject, c.section, c.students, c.room_id, ra.room_name
+        from classes c
+        left join room_access ra on ra.room_id = c.room_id and ra.teacher_id = c.teacher_id
+        where c.teacher_id = $1
+    `;
     try {
         const data = await db.query(query, [req.user.email])
         // console.log(data.rows)
@@ -33,6 +38,30 @@ const fetchClassesList = async (req, res) => {
         res.json({ status: 'error' }).status(400);
     }
 
+}
+
+const assignRoom = async (req, res) => {
+    const { classId, roomId } = req.body;
+    try {
+        if (roomId) {
+            const access = await db.query(
+                'select 1 from room_access where teacher_id = $1 and room_id = $2',
+                [req.user.email, roomId]
+            );
+            if (access.rowCount === 0) {
+                return res.status(403).json({ status: 'error', message: "You haven't added this room yet." });
+            }
+        }
+        await db.query(
+            'update classes set room_id = $1 where class_id = $2 and teacher_id = $3',
+            [roomId || null, classId, req.user.email]
+        );
+        res.status(200).json({ status: 'success' });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).json({ status: 'error' });
+    }
 }
 
 const getStudents = async (req, res) => {
@@ -98,6 +127,79 @@ const photoAttendance = async (req, res) => {
     }
 }
 
+const autoCaptureAttendance = async (req, res) => {
+    const { classId } = req.body;
+    try {
+        const roomData = await db.query(
+            `select c.room_id, r.camera_url, r.camera_username, r.camera_password
+             from classes c
+             left join rooms r on r.room_id = c.room_id
+             where c.class_id = $1 and c.teacher_id = $2`,
+            [classId, req.user.email]
+        );
+
+        if (roomData.rowCount === 0 || !roomData.rows[0].room_id) {
+            return res.status(400).json({ status: 'error', message: 'No room assigned to this class yet.' });
+        }
+
+        const { camera_url, camera_username, camera_password } = roomData.rows[0];
+
+        let snapshot;
+        try {
+            snapshot = await axios.get(camera_url, {
+                responseType: 'arraybuffer',
+                timeout: 8000,
+                auth: camera_username ? { username: camera_username, password: camera_password || '' } : undefined,
+            });
+        } catch (err) {
+            console.log(err.message);
+            return res.status(502).json({ status: 'error', message: "Could not reach the room camera. Check that it's online and the URL is correct." });
+        }
+
+        const embeddingsData = await db.query(
+            'select student_id,left_embeddings,right_embeddings,center_embeddings from embeddings where class_id = $1',
+            [classId]
+        );
+
+        const formData = new FormData();
+        formData.append('images', Buffer.from(snapshot.data), {
+            filename: 'capture.jpg',
+            contentType: snapshot.headers['content-type'] || 'image/jpeg',
+        });
+        formData.append('embeddings', JSON.stringify(embeddingsData.rows));
+
+        let matchResult;
+        try {
+            matchResult = await axios.post(`${MODEL_API_URL}/match_embeddings`, formData, { headers: { ...formData.getHeaders() } });
+        } catch (err) {
+            console.log(err.message);
+            return res.status(400).json({ status: 'error', message: 'Face matching failed.' });
+        }
+
+        const presentIds = new Set(Object.keys(matchResult.data.status || {}));
+        const studentsData = await db.query('select student_id from students where class_id = $1', [classId]);
+        const date = new Date().toISOString().split('T')[0];
+
+        for (const row of studentsData.rows) {
+            const status = presentIds.has(row.student_id) ? 'Present' : 'Absent';
+            await db.query(
+                'INSERT INTO attendance (student_id, class_id, date, status) VALUES ($1, $2, $3, $4) ON CONFLICT (student_id, class_id, date) DO UPDATE SET status = EXCLUDED.status',
+                [row.student_id, classId, date, status]
+            );
+        }
+
+        res.status(200).json({
+            status: 'success',
+            attendance: matchResult.data,
+            presentCount: presentIds.size,
+            totalStudents: studentsData.rowCount,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({ status: 'error' });
+    }
+}
+
 const getClassStudentStats = async (req, res) => {
     const { classId } = req.body;
     try {
@@ -150,5 +252,5 @@ const getClassStudentStats = async (req, res) => {
     }
 }
 
-export { addClass, fetchClassesList, getStudents, markAttendance, photoAttendance, getClassStudentStats };
+export { addClass, fetchClassesList, getStudents, markAttendance, photoAttendance, getClassStudentStats, assignRoom, autoCaptureAttendance };
 
