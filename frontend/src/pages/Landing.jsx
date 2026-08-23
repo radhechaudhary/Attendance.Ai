@@ -21,6 +21,7 @@ import {
   Info
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import ThemeToggle from '../components/ThemeToggle';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ const LandingPage = () => {
   }, [scanState]);
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 font-sans overflow-x-hidden relative selection:bg-blue-600/30 selection:text-blue-200">
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans overflow-x-hidden relative selection:bg-blue-600/30 selection:text-blue-200">
 
       {/* Background Glowing Ambient Orbs */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
@@ -87,7 +88,7 @@ const LandingPage = () => {
             <div className="p-2 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-lg shadow-blue-500/20">
               <GraduationCap size={24} className="text-white" />
             </div>
-            <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
+            <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-50 via-slate-200 to-slate-400">
               Attendance.Ai
             </span>
           </div>
@@ -100,9 +101,10 @@ const LandingPage = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
             <button
               onClick={() => navigate('/login?tab=student')}
-              className="text-sm font-semibold text-slate-300 hover:text-white px-4 py-2 rounded-lg hover:bg-slate-800/50 transition-all"
+              className="text-sm font-semibold text-slate-300 hover:text-slate-50 px-4 py-2 rounded-lg hover:bg-slate-800/50 transition-all"
             >
               Join Class
             </button>
@@ -127,7 +129,7 @@ const LandingPage = () => {
           </div>
 
           {/* Heading */}
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-50 via-slate-100 to-slate-400">
             Classroom Attendance <br className="hidden sm:inline" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400">
               Simplified by AI.
@@ -159,15 +161,15 @@ const LandingPage = () => {
           {/* Core Stats Inline */}
           <div className="grid grid-cols-3 gap-6 pt-6 border-t border-slate-800/80 max-w-lg">
             <div>
-              <div className="text-3xl font-extrabold text-white">99.8%</div>
+              <div className="text-3xl font-extrabold text-slate-50">99.8%</div>
               <div className="text-xs text-slate-500 mt-1">Accuracy Rate</div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-white">&lt; 2s</div>
+              <div className="text-3xl font-extrabold text-slate-50">&lt; 2s</div>
               <div className="text-xs text-slate-500 mt-1">Detection Speed</div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-white">Zero</div>
+              <div className="text-3xl font-extrabold text-slate-50">Zero</div>
               <div className="text-xs text-slate-500 mt-1">Proxy Attendance</div>
             </div>
           </div>
@@ -191,7 +193,7 @@ const LandingPage = () => {
 
               {/* Simulated Camera Feed (SVG wireframe face) */}
               <div className="absolute inset-0 flex items-center justify-center p-8 select-none">
-                <svg viewBox="0 0 100 100" className={`w-2/3 h-2/3 transition-all duration-700 ${scanState === 'scanning' ? 'text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]' : scanState === 'success' ? 'text-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'text-slate-700'}`}>
+                <svg viewBox="0 0 100 100" className={`w-2/3 h-2/3 transition-all duration-700 ${scanState === 'scanning' ? 'text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]' : scanState === 'success' ? 'text-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'text-slate-500'}`}>
                   {/* Face outline */}
                   <path fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2,2" d="M 50 15 C 32 15 22 25 22 50 C 22 75 32 85 50 85 C 68 85 78 75 78 50 C 78 25 68 15 50 15 Z" />
                   {/* Eye grids */}
@@ -282,7 +284,7 @@ const LandingPage = () => {
                       <CheckCircle size={32} className="animate-bounce" />
                     </div>
                     <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Attendance Logged!</h3>
+                      <h3 className="text-lg font-bold text-slate-50">Attendance Logged!</h3>
                       <p className="text-xs text-slate-400">Verified student signature match</p>
                     </div>
 
@@ -324,7 +326,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 text-center space-y-16">
           <div className="space-y-4 max-w-2xl mx-auto">
             <h2 className="text-xs font-bold text-blue-500 uppercase tracking-widest">Advanced Features</h2>
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">Engineered to eliminate fraud</h3>
+            <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-50">Engineered to eliminate fraud</h3>
             <p className="text-slate-400 text-base">
               A comprehensive classroom automation suite powered by cutting-edge neural models, designed for both educational institutions and commercial workshops.
             </p>
@@ -337,7 +339,7 @@ const LandingPage = () => {
               <div className="p-3 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl w-fit mb-6">
                 <Camera size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">Multi-Angle Biometrics</h4>
+              <h4 className="text-xl font-bold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Multi-Angle Biometrics</h4>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Requires students to submit three facial registration photos (front, left, right) to create a multi-dimensional bio-mesh, preventing attendance proxies.
               </p>
@@ -348,7 +350,7 @@ const LandingPage = () => {
               <div className="p-3 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl w-fit mb-6">
                 <Shield size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors">Liveness Detection</h4>
+              <h4 className="text-xl font-bold text-slate-50 mb-3 group-hover:text-purple-400 transition-colors">Liveness Detection</h4>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Prevents photo or video playback fraud. Our advanced model verifies depth and micro-expressions, ensuring only physical presence counts.
               </p>
@@ -359,7 +361,7 @@ const LandingPage = () => {
               <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl w-fit mb-6">
                 <BarChart3 size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">Real-Time Dashboards</h4>
+              <h4 className="text-xl font-bold text-slate-50 mb-3 group-hover:text-emerald-400 transition-colors">Real-Time Dashboards</h4>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Teachers receive instant updates on class metrics, including total present, percentage rates, and warning flags for students with low attendance.
               </p>
@@ -370,7 +372,7 @@ const LandingPage = () => {
               <div className="p-3 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl w-fit mb-6">
                 <Smartphone size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">Companion Mobile Client</h4>
+              <h4 className="text-xl font-bold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Companion Mobile Client</h4>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Tauri-powered cross-platform mobile client allows students to submit registration profiles and allows teachers to trigger scans right from their phones.
               </p>
@@ -381,7 +383,7 @@ const LandingPage = () => {
               <div className="p-3 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl w-fit mb-6">
                 <BookOpen size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors">One-Click Exports</h4>
+              <h4 className="text-xl font-bold text-slate-50 mb-3 group-hover:text-purple-400 transition-colors">One-Click Exports</h4>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Export comprehensive class sheets in Excel/CSV layout containing full timestamps, individual session performance, and averages automatically formatted.
               </p>
@@ -392,7 +394,7 @@ const LandingPage = () => {
               <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl w-fit mb-6">
                 <Users size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">Encrypted Data Vault</h4>
+              <h4 className="text-xl font-bold text-slate-50 mb-3 group-hover:text-emerald-400 transition-colors">Encrypted Data Vault</h4>
               <p className="text-slate-400 text-sm leading-relaxed">
                 All face bio-templates are encrypted and hashed, never stored as raw photographs, keeping student privacy and credentials extremely secure.
               </p>
@@ -407,7 +409,7 @@ const LandingPage = () => {
         <div className="text-center space-y-16">
           <div className="space-y-4 max-w-2xl mx-auto">
             <h2 className="text-xs font-bold text-purple-500 uppercase tracking-widest">Workflow</h2>
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">Three Simple Steps</h3>
+            <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-50">Three Simple Steps</h3>
             <p className="text-slate-400 text-base">
               Set up classroom automation in less than five minutes.
             </p>
@@ -423,7 +425,7 @@ const LandingPage = () => {
                 </div>
                 <div className="hidden lg:block absolute top-1/2 left-16 w-[calc(100%-4rem)] h-[1px] bg-slate-800 z-[-1]"></div>
               </div>
-              <h4 className="text-xl font-bold text-white">Create Classes</h4>
+              <h4 className="text-xl font-bold text-slate-50">Create Classes</h4>
               <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
                 Teachers register and create a class portal, generating a unique Class Code to share with students.
               </p>
@@ -437,7 +439,7 @@ const LandingPage = () => {
                 </div>
                 <div className="hidden lg:block absolute top-1/2 left-16 w-[calc(100%-4rem)] h-[1px] bg-slate-800 z-[-1]"></div>
               </div>
-              <h4 className="text-xl font-bold text-white">Student Registration</h4>
+              <h4 className="text-xl font-bold text-slate-50">Student Registration</h4>
               <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
                 Students enter the class code and submit 3-angle verification photos using their device camera.
               </p>
@@ -448,7 +450,7 @@ const LandingPage = () => {
               <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-xl font-bold text-emerald-400 group-hover:border-emerald-500 transition-colors">
                 3
               </div>
-              <h4 className="text-xl font-bold text-white">Instant Scans</h4>
+              <h4 className="text-xl font-bold text-slate-50">Instant Scans</h4>
               <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
                 Teachers snap a picture of the class or scan face feeds, and AI logs present students directly into the database.
               </p>
@@ -463,7 +465,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 text-center space-y-16">
           <div className="space-y-4 max-w-2xl mx-auto">
             <h2 className="text-xs font-bold text-emerald-500 uppercase tracking-widest">Technologies</h2>
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">Powered by Robust Stack</h3>
+            <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-50">Powered by Robust Stack</h3>
             <p className="text-slate-400 text-base">
               Built using state of the art frameworks for speed, security, and accuracy.
             </p>
@@ -476,7 +478,7 @@ const LandingPage = () => {
               <div className="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
                 <Code size={24} />
               </div>
-              <span className="font-semibold text-white">React & Tailwind</span>
+              <span className="font-semibold text-slate-50">React & Tailwind</span>
               <span className="text-xs text-slate-500">Fluid Web Interface</span>
             </div>
 
@@ -485,7 +487,7 @@ const LandingPage = () => {
               <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl">
                 <Server size={24} />
               </div>
-              <span className="font-semibold text-white">Node & Express</span>
+              <span className="font-semibold text-slate-50">Node & Express</span>
               <span className="text-xs text-slate-500">Robust REST APIs</span>
             </div>
 
@@ -494,7 +496,7 @@ const LandingPage = () => {
               <div className="p-3 bg-yellow-500/10 text-yellow-400 rounded-xl">
                 <Cpu size={24} />
               </div>
-              <span className="font-semibold text-white">Python & OpenCV</span>
+              <span className="font-semibold text-slate-50">Python & OpenCV</span>
               <span className="text-xs text-slate-500">Neural Net Inference</span>
             </div>
 
@@ -503,7 +505,7 @@ const LandingPage = () => {
               <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
                 <Database size={24} />
               </div>
-              <span className="font-semibold text-white">PostgreSQL</span>
+              <span className="font-semibold text-slate-50">PostgreSQL</span>
               <span className="text-xs text-slate-500"> Database</span>
             </div>
 
@@ -519,7 +521,7 @@ const LandingPage = () => {
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none"></div>
 
           <div className="max-w-2xl mx-auto space-y-4 relative z-10">
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">
+            <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-50">
               Elevate Your Classroom Analytics
             </h3>
             <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
@@ -530,13 +532,13 @@ const LandingPage = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
             <button
               onClick={() => navigate('/login?tab=teacher')}
-              className="bg-white hover:bg-slate-100 text-slate-950 font-bold px-8 py-4 rounded-xl transition-all shadow-lg active:scale-95"
+              className="bg-white hover:opacity-90 text-slate-950 font-bold px-8 py-4 rounded-xl transition-all shadow-lg active:scale-95"
             >
               Get Started Now
             </button>
             <button
               onClick={() => navigate('/login?tab=student')}
-              className="bg-slate-800/80 hover:bg-slate-700 text-white font-semibold px-8 py-4 rounded-xl border border-slate-700/60 transition-all active:scale-95"
+              className="bg-slate-800/80 hover:bg-slate-700 text-slate-50 font-semibold px-8 py-4 rounded-xl border border-slate-700/60 transition-all active:scale-95"
             >
               Register as Student
             </button>

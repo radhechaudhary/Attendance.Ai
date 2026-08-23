@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import useUserStore from '../store/userStore';
 import axios from 'axios';
 import { useEffect } from 'react';
+import ThemeToggle from '../components/ThemeToggle';
 
 const SignupPage = () => {
     useEffect(() => {
@@ -67,7 +68,10 @@ const SignupPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4 sm:p-8 font-sans overflow-hidden relative">
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-8 font-sans overflow-hidden relative">
+            <div className="fixed top-6 right-6 z-20">
+                <ThemeToggle />
+            </div>
             {/* Background Decorative Elements */}
             <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
             <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-emerald-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
@@ -76,7 +80,7 @@ const SignupPage = () => {
             <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 z-10">
 
                 {/* Left Column: Branding / Info */}
-                <div className="hidden lg:flex flex-col justify-center text-white px-8">
+                <div className="hidden lg:flex flex-col justify-center text-slate-50 px-8">
                     <div className="mb-8 inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl backdrop-blur-md w-16 h-16 shadow-2xl border border-white/10">
                         <GraduationCap size={32} className="text-purple-400" />
                     </div>
@@ -97,7 +101,7 @@ const SignupPage = () => {
                         transition={{ duration: 0.3 }}
                     >
                         <div className="text-center mb-6">
-                            <h2 className="text-2xl font-bold text-white mb-2">Teacher Registration</h2>
+                            <h2 className="text-2xl font-bold text-slate-50 mb-2">Teacher Registration</h2>
                             <p className="text-slate-400 text-sm">Create an account to manage your classes.</p>
                         </div>
 
@@ -112,7 +116,8 @@ const SignupPage = () => {
                                     <input
                                         name='name'
                                         type="text"
-                                        className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                                        autoComplete="name"
+                                        className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
                                         placeholder="Dr. Jane Smith"
                                         required
                                     />
@@ -128,7 +133,7 @@ const SignupPage = () => {
                                     <input
                                         name='collegeName'
                                         type="text"
-                                        className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                                        className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
                                         placeholder="State University"
                                         required
                                     />
@@ -145,7 +150,8 @@ const SignupPage = () => {
                                         <input
                                             name='email'
                                             type="email"
-                                            className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                                            autoComplete="email"
+                                            className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
                                             placeholder="teacher@school.edu"
                                             required
                                         />
@@ -174,10 +180,12 @@ const SignupPage = () => {
                                         <input
                                             name='password'
                                             type="password"
-                                            className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-9 p-3.5 transition-colors placeholder-slate-500"
+                                            autoComplete="new-password"
+                                            className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-9 p-3.5 transition-colors placeholder-slate-500"
                                             placeholder="••••••••"
                                             required
                                         />
+                                        <p className="text-[11px] text-slate-500 mt-1.5 ml-1">At least 6 characters</p>
                                     </div>
                                 </div>
 
@@ -190,7 +198,8 @@ const SignupPage = () => {
                                         <input
                                             name='confirmPassword'
                                             type="password"
-                                            className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-9 p-3.5 transition-colors placeholder-slate-500"
+                                            autoComplete="new-password"
+                                            className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-9 p-3.5 transition-colors placeholder-slate-500"
                                             placeholder="••••••••"
                                             required
                                         />

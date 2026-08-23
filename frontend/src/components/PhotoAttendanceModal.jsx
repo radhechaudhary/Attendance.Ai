@@ -247,13 +247,13 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
                 <Camera className="text-purple-400" size={20} />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Photo Attendance</h3>
+                <h3 className="text-xl font-bold text-slate-50">Photo Attendance</h3>
                 <p className="text-slate-400 text-sm">Upload or capture group photos for AI recognition</p>
               </div>
             </div>
             <button
               onClick={handleClose}
-              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+              className="p-2 text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -298,7 +298,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
                 {previews.length > 0 && (
                   <div className="absolute top-4 right-4 w-14 h-14 rounded-xl border border-white/20 overflow-hidden shadow-2xl z-10 pointer-events-none">
                     <img src={previews[previews.length - 1]} alt="Last capture" className="w-full h-full object-cover" />
-                    <div className="absolute bottom-0 inset-x-0 bg-slate-950/70 text-[8px] text-center text-white py-0.5 font-bold uppercase">
+                    <div className="absolute bottom-0 inset-x-0 bg-slate-950/70 text-[8px] text-center text-slate-50 py-0.5 font-bold uppercase">
                       Captured
                     </div>
                   </div>
@@ -311,7 +311,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
                       <button
                         type="button"
                         onClick={switchCamera}
-                        className="w-10 h-10 rounded-full bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md border border-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                        className="w-10 h-10 rounded-full bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md border border-slate-800 text-slate-300 hover:text-slate-50 flex items-center justify-center transition-colors cursor-pointer"
                         title="Switch Camera"
                       >
                         <RotateCw size={18} />
@@ -333,7 +333,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
                     <button
                       type="button"
                       onClick={stopCamera}
-                      className="bg-slate-900/90 backdrop-blur-md border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg px-4 py-2 text-xs font-semibold transition-colors cursor-pointer"
+                      className="bg-slate-900/90 backdrop-blur-md border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-slate-50 rounded-lg px-4 py-2 text-xs font-semibold transition-colors cursor-pointer"
                     >
                       Done
                     </button>
@@ -344,7 +344,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
                 {cameraError && (
                   <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center z-30">
                     <AlertCircle className="text-rose-500 mb-2" size={32} />
-                    <p className="text-white font-medium mb-4 text-sm">{cameraError}</p>
+                    <p className="text-slate-50 font-medium mb-4 text-sm">{cameraError}</p>
                     <div className="flex gap-3">
                       <button
                         type="button"
@@ -378,7 +378,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
                   <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center mb-4 group-hover:bg-purple-500/10 transition-colors">
                     <Upload className="text-slate-400 group-hover:text-purple-400" size={24} />
                   </div>
-                  <h4 className="text-lg font-bold text-white mb-2">Upload Files</h4>
+                  <h4 className="text-lg font-bold text-slate-50 mb-2">Upload Files</h4>
                   <p className="text-slate-400 text-sm max-w-[200px]">Select group photos from your device library</p>
                 </div>
 
@@ -391,7 +391,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
                   <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center mb-4 group-hover:bg-purple-500/10 transition-colors">
                     <Camera className="text-slate-400 group-hover:text-purple-400" size={24} />
                   </div>
-                  <h4 className="text-lg font-bold text-white mb-2">Use Camera</h4>
+                  <h4 className="text-lg font-bold text-slate-50 mb-2">Use Camera</h4>
                   <p className="text-slate-400 text-sm max-w-[200px]">Take photos of students in real-time</p>
                 </button>
               </div>
@@ -408,7 +408,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
                       <img src={preview} alt="Preview" className="w-full h-full object-cover" />
                       <button
                         onClick={() => removeImage(index)}
-                        className="absolute top-1 right-1 p-1 bg-slate-900/80 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-500 cursor-pointer"
+                        className="absolute top-1 right-1 p-1 bg-slate-900/80 text-slate-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-500 cursor-pointer"
                       >
                         <X size={14} />
                       </button>
@@ -435,7 +435,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
 
                 <div className="flex items-center justify-between bg-slate-800/30 p-4 rounded-2xl border border-slate-800">
                   <div className="text-sm">
-                    <span className="text-white font-medium">{selectedFiles.length}</span>
+                    <span className="text-slate-50 font-medium">{selectedFiles.length}</span>
                     <span className="text-slate-400 ml-1">images selected</span>
                   </div>
                   <button
@@ -456,7 +456,7 @@ const PhotoAttendanceModal = ({ isOpen, onClose, students, setStudents }) => {
           <div className="p-6 bg-slate-900/50 border-t border-slate-800 flex items-center justify-end space-x-4">
             <button
               onClick={handleClose}
-              className="px-6 py-2.5 text-sm font-medium text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="px-6 py-2.5 text-sm font-medium text-slate-400 hover:text-slate-50 transition-colors cursor-pointer"
             >
               Cancel
             </button>

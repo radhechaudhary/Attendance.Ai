@@ -5,6 +5,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import useUserStore from '../store/userStore';
 import { useEffect } from 'react';
+import ThemeToggle from '../components/ThemeToggle';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -123,7 +124,10 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4 sm:p-8 font-sans overflow-hidden relative">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-8 font-sans overflow-hidden relative">
+      <div className="fixed top-6 right-6 z-20">
+        <ThemeToggle />
+      </div>
       {/* Background Decorative Elements */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
       <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
@@ -132,7 +136,7 @@ const LoginPage = () => {
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 z-10">
 
         {/* Left Column: Branding / Info */}
-        <div className="hidden lg:flex flex-col justify-center text-white px-8">
+        <div className="hidden lg:flex flex-col justify-center text-slate-50 px-8">
           <div className="mb-8 inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl backdrop-blur-md w-16 h-16 shadow-2xl border border-white/10">
             <GraduationCap size={32} className="text-blue-400" />
           </div>
@@ -171,7 +175,7 @@ const LoginPage = () => {
               }}
               className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'student'
                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                : 'text-slate-400 hover:text-white hover:bg-slate-700/30'
+                : 'text-slate-400 hover:text-slate-50 hover:bg-slate-700/30'
                 }`}
             >
               <User size={16} className="mr-2" />
@@ -184,7 +188,7 @@ const LoginPage = () => {
               }}
               className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'teacher'
                 ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/25'
-                : 'text-slate-400 hover:text-white hover:bg-slate-700/30'
+                : 'text-slate-400 hover:text-slate-50 hover:bg-slate-700/30'
                 }`}
             >
               <GraduationCap size={16} className="mr-2" />
@@ -203,7 +207,7 @@ const LoginPage = () => {
                 transition={{ duration: 0.3 }}
               >
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-white mb-2">
+                  <h2 className="text-2xl font-bold text-slate-50 mb-2">
                     {studentMode === 'login' ? 'Student Login' : 'Student Sign Up'}
                   </h2>
                   <p className="text-slate-400 text-sm">
@@ -218,7 +222,7 @@ const LoginPage = () => {
                     onClick={() => { setStudentMode('login'); setErrorMessage(''); }}
                     className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-all duration-300 ${studentMode === 'login'
                       ? 'bg-blue-600 text-white'
-                      : 'text-slate-400 hover:text-white'
+                      : 'text-slate-400 hover:text-slate-50'
                       }`}
                   >
                     Log In
@@ -228,7 +232,7 @@ const LoginPage = () => {
                     onClick={() => { setStudentMode('signup'); setErrorMessage(''); }}
                     className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-all duration-300 ${studentMode === 'signup'
                       ? 'bg-blue-600 text-white'
-                      : 'text-slate-400 hover:text-white'
+                      : 'text-slate-400 hover:text-slate-50'
                       }`}
                   >
                     Sign Up
@@ -247,7 +251,8 @@ const LoginPage = () => {
                         <input
                           type="text"
                           name="name"
-                          className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                          autoComplete="name"
+                          className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
                           placeholder="John Doe"
                           required
                         />
@@ -264,7 +269,8 @@ const LoginPage = () => {
                       <input
                         type="email"
                         name="email"
-                        className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                        autoComplete="email"
+                        className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
                         placeholder="student@school.edu"
                         required
                       />
@@ -281,10 +287,14 @@ const LoginPage = () => {
                         <input
                           name="password"
                           type="password"
-                          className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                          autoComplete={studentMode === 'signup' ? 'new-password' : 'current-password'}
+                          className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
                           placeholder="••••••••"
                           required
                         />
+                        {studentMode === 'signup' && (
+                          <p className="text-[11px] text-slate-500 mt-1.5 ml-1">At least 6 characters</p>
+                        )}
                       </div>
                     </div>
 
@@ -298,7 +308,8 @@ const LoginPage = () => {
                           <input
                             name="confirmPassword"
                             type="password"
-                            className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                            autoComplete="new-password"
+                            className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
                             placeholder="••••••••"
                             required
                           />
@@ -352,7 +363,7 @@ const LoginPage = () => {
                 transition={{ duration: 0.3 }}
               >
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-white mb-2">Teacher Login</h2>
+                  <h2 className="text-2xl font-bold text-slate-50 mb-2">Teacher Login</h2>
                   <p className="text-slate-400 text-sm">Log in to your account.</p>
                 </div>
 
@@ -367,7 +378,8 @@ const LoginPage = () => {
                       <input
                         name='email'
                         type="email"
-                        className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                        autoComplete="email"
+                        className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
                         placeholder="teacher@school.edu"
                         required
                       />
@@ -383,7 +395,8 @@ const LoginPage = () => {
                       <input
                         name='password'
                         type="password"
-                        className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                        autoComplete="current-password"
+                        className="w-full bg-slate-900/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
                         placeholder="••••••••"
                         required
                       />

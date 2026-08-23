@@ -68,7 +68,7 @@ const Students = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-200 font-sans flex overflow-hidden">
+    <div className="min-h-screen bg-slate-900 text-slate-200 font-sans flex overflow-hidden">
       {/* Background blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
       <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
@@ -79,7 +79,7 @@ const Students = () => {
         {/* Header */}
         <header className="flex justify-between items-center mb-10">
           <div>
-            <h2 className="text-3xl font-bold text-white mb-2 flex items-center">
+            <h2 className="text-3xl font-bold text-slate-50 mb-2 flex items-center">
               {selectedClass ? (
                 <button
                   onClick={() => setSelectedClass(null)}
@@ -147,7 +147,7 @@ const Students = () => {
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{cls.section}</span>
-                      <h4 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">{cls.subject}</h4>
+                      <h4 className="text-lg font-bold text-slate-50 group-hover:text-blue-400 transition-colors">{cls.subject}</h4>
                     </div>
                     <div className="p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400 group-hover:text-blue-400 transition-colors">
                       <ArrowUpRight size={18} />

@@ -58,7 +58,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-200 font-sans flex overflow-hidden">
+    <div className="min-h-screen bg-slate-900 text-slate-200 font-sans flex overflow-hidden">
 
       {/* Background blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
@@ -72,7 +72,7 @@ const Dashboard = () => {
         {/* Header */}
         <header className="flex justify-between items-center mb-12">
           <div>
-            <h2 className="text-3xl font-bold text-white mb-2">Welcome,{name}</h2>
+            <h2 className="text-3xl font-bold text-slate-50 mb-2">Welcome,{name}</h2>
             <p className="text-slate-400">{collegeName}</p>
           </div>
 
@@ -85,7 +85,7 @@ const Dashboard = () => {
 
         {/* Classes Section Header */}
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-semibold text-white flex items-center">
+          <h3 className="text-xl font-semibold text-slate-50 flex items-center">
             <BookOpen className="mr-2 text-blue-400" size={20} />
             My Classes
           </h3>
@@ -123,9 +123,9 @@ const Dashboard = () => {
                         <span className={`inline-block px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs font-semibold mb-3 ${textClass}`}>
                           {cls.section}
                         </span>
-                        <h4 className="text-lg font-bold text-white leading-tight group-hover:text-blue-400 transition-colors">{cls.subject}</h4>
+                        <h4 className="text-lg font-bold text-slate-50 leading-tight group-hover:text-blue-400 transition-colors">{cls.subject}</h4>
                       </div>
-                      <button className="text-slate-500 hover:text-white transition-colors p-1">
+                      <button className="text-slate-500 hover:text-slate-50 transition-colors p-1">
                         <MoreVertical size={18} />
                       </button>
                     </div>
@@ -162,7 +162,7 @@ const Dashboard = () => {
               <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mb-4 text-blue-500">
                 <Plus size={32} />
               </div>
-              <h4 className="text-lg font-semibold text-white mb-2">Create First Class</h4>
+              <h4 className="text-lg font-semibold text-slate-50 mb-2">Create First Class</h4>
               <p className="text-sm text-slate-400 max-w-xs">You haven't created any classes yet. Click here to get started.</p>
             </div>
           )}
@@ -186,7 +186,7 @@ const Dashboard = () => {
             >
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors"
+                className="absolute top-6 right-6 text-slate-400 hover:text-slate-50 transition-colors"
               >
                 <X size={24} />
               </button>
@@ -195,7 +195,7 @@ const Dashboard = () => {
                 <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center mb-4 text-blue-400">
                   <BookOpen size={24} />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Create New Class</h3>
+                <h3 className="text-2xl font-bold text-slate-50 mb-2">Create New Class</h3>
                 <p className="text-slate-400 text-sm">Add a new class to your dashboard to start taking AI attendance.</p>
               </div>
 
@@ -206,7 +206,7 @@ const Dashboard = () => {
                     type="text"
                     value={newClass.subject}
                     onChange={(e) => setNewClass({ ...newClass, subject: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 transition-colors"
+                    className="w-full bg-slate-800 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 transition-colors"
                     placeholder="e.g. Introduction to Programming"
                     required
                   />
@@ -218,7 +218,7 @@ const Dashboard = () => {
                     type="text"
                     value={newClass.section}
                     onChange={(e) => setNewClass({ ...newClass, section: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 transition-colors uppercase font-mono"
+                    className="w-full bg-slate-800 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 transition-colors uppercase font-mono"
                     placeholder="e.g. CS101"
                     required
                   />
@@ -231,7 +231,7 @@ const Dashboard = () => {
                     type="text"
                     value={newClass.schedule}
                     onChange={(e) => setNewClass({ ...newClass, schedule: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 transition-colors"
+                    className="w-full bg-slate-800 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 transition-colors"
                     placeholder="e.g. Mon, Wed 10:00 AM"
                   />
                 </div>
@@ -240,7 +240,7 @@ const Dashboard = () => {
                   <button
                     type="button"
                     onClick={() => setIsAddModalOpen(false)}
-                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl text-sm px-5 py-3.5 text-center transition-colors border border-slate-700"
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-50 font-medium rounded-xl text-sm px-5 py-3.5 text-center transition-colors border border-slate-700"
                   >
                     Cancel
                   </button>

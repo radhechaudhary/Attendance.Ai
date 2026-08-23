@@ -115,7 +115,7 @@ const ClassDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-200 font-sans p-6 sm:p-10 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-900 text-slate-200 font-sans p-6 sm:p-10 relative overflow-hidden">
       {/* Background blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
       {photoMode && <PhotoAttendanceModal isOpen={photoMode} onClose={() => setPhotoMode(false)} classId={classId} students={students} setStudents={setStudents} />}
@@ -127,7 +127,7 @@ const ClassDetails = () => {
         <div className="flex justify-between items-center mb-8">
           <button
             onClick={() => navigate('/dashboard')}
-            className="flex items-center text-slate-400 hover:text-white transition-colors group"
+            className="flex items-center text-slate-400 hover:text-slate-50 transition-colors group"
           >
             <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center mr-3 group-hover:bg-slate-700 transition-colors">
               <ArrowLeft size={18} />
@@ -157,7 +157,7 @@ const ClassDetails = () => {
               <span className="inline-block px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-blue-400 text-sm font-semibold mb-3">
                 {classObj.section}
               </span>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{classObj.subject}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-slate-50 mb-2">{classObj.subject}</h1>
               <div className="flex items-center text-slate-400 text-sm space-x-4 mb-4">
                 <span className="flex items-center"><Users size={16} className="mr-1.5" /> {students.length} Students</span>
                 <span className="flex items-center"><Clock size={16} className="mr-1.5" /> {classObj.schedule || 'No Schedule'}</span>
@@ -200,7 +200,7 @@ const ClassDetails = () => {
           className="bg-slate-900/40 backdrop-blur-md border border-slate-800 rounded-3xl overflow-hidden"
         >
           <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-            <h2 className="text-xl font-bold text-white flex items-center">
+            <h2 className="text-xl font-bold text-slate-50 flex items-center">
               <Users size={20} className="mr-2 text-blue-400" />
               Student Roster
             </h2>

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { BookOpen, LayoutDashboard, Users, Settings, LogOut } from 'lucide-react';
 import axios from 'axios';
 import useUserStore from '../store/userStore';
+import ThemeToggle from './ThemeToggle';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -36,11 +37,14 @@ const Sidebar = () => {
 
   return (
     <aside className="w-64 bg-slate-900/80 backdrop-blur-xl border-r border-slate-800 flex flex-col z-10 hidden md:flex h-screen sticky top-0">
-      <div className="h-20 flex items-center px-8 border-b border-slate-800">
-        <BookOpen className="text-blue-500 mr-3" size={28} />
-        <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-          Smart AI
-        </h1>
+      <div className="h-20 flex items-center justify-between px-6 border-b border-slate-800">
+        <div className="flex items-center">
+          <BookOpen className="text-blue-500 mr-3" size={28} />
+          <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-50 to-slate-400">
+            Smart AI
+          </h1>
+        </div>
+        <ThemeToggle />
       </div>
 
       <nav className="flex-1 py-8 px-4 space-y-2">
@@ -53,7 +57,7 @@ const Sidebar = () => {
               className={`flex items-center px-4 py-3 rounded-xl font-medium transition-all ${
                 isActive
                   ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  : 'text-slate-400 hover:text-slate-50 hover:bg-slate-800/50'
               }`}
             >
               <item.icon size={20} className="mr-3" />

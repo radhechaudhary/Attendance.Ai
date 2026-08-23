@@ -94,13 +94,13 @@ const JoinClassModal = ({ isOpen, onClose, defaultClassCode = '', onSuccess }) =
                 <KeyRound className="text-blue-400" size={20} />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Join a Class</h3>
-                <p className="text-slate-400 text-sm">Enter the class code and capture 3 face angles.</p>
+                <h3 className="text-xl font-bold text-slate-50">Join a Class</h3>
+                <p className="text-slate-400 text-sm">You'll need a Class Code from your teacher, plus 3 quick photos so attendance can recognize you.</p>
               </div>
             </div>
             <button
               onClick={handleClose}
-              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors"
+              className="p-2 text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded-xl transition-colors"
             >
               <X size={20} />
             </button>
@@ -118,11 +118,12 @@ const JoinClassModal = ({ isOpen, onClose, defaultClassCode = '', onSuccess }) =
                   type="text"
                   value={classCode}
                   onChange={(e) => setClassCode(e.target.value)}
-                  className="w-full bg-slate-800/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500 uppercase font-mono"
+                  className="w-full bg-slate-800/50 border border-slate-700 text-slate-50 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500 uppercase font-mono"
                   placeholder="e.g. 1234567890"
                   required
                 />
               </div>
+              <p className="text-[11px] text-slate-500 mt-1.5 ml-1">Ask your teacher, or use their invite link.</p>
             </div>
 
             <div>
@@ -180,7 +181,7 @@ const JoinClassModal = ({ isOpen, onClose, defaultClassCode = '', onSuccess }) =
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl text-sm px-5 py-3.5 text-center transition-colors border border-slate-700"
+                className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-50 font-medium rounded-xl text-sm px-5 py-3.5 text-center transition-colors border border-slate-700"
               >
                 Cancel
               </button>

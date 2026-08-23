@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Error from "./error";
+import Loading from "./error";
 import useUserStore from "../store/userStore";
 
 
@@ -40,7 +40,7 @@ function Protected({ allowedRole }) {
             }
         })();
     }, [])
-    return verified ? <Outlet /> : <Error />
+    return verified ? <Outlet /> : <Loading />
 }
 
 export default Protected
