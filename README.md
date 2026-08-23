@@ -46,39 +46,39 @@ Both paths end up at the same place: the model service compares faces in the pho
 
 ```mermaid
 flowchart LR
-    subgraph Client
-        TFE[Teacher Dashboard]
-        SFE[Student Dashboard]
+    subgraph Client["Browser"]
+        TFE["Teacher Dashboard"]
+        SFE["Student Dashboard"]
     end
 
-    subgraph Backend [Node / Express API :3000]
-        AUTH[Auth\nteacher + student, JWT cookie]
-        CLASS[Classes & Rooms]
-        ATT[Attendance pipeline]
+    subgraph Backend["Node / Express API (port 3000)"]
+        AUTH["Auth - teacher + student, JWT cookie"]
+        CLASS["Classes and Rooms"]
+        ATT["Attendance pipeline"]
     end
 
-    subgraph ModelSvc [Python / Flask :5000]
-        DET[RetinaFace detect + align]
-        ENC[ArcFace 512-d embeddings]
-        MATCH[Cosine-similarity matching]
+    subgraph ModelSvc["Python / Flask (port 5000)"]
+        DET["RetinaFace detect and align"]
+        ENC["ArcFace 512-d embeddings"]
+        MATCH["Cosine-similarity matching"]
     end
 
-    DB[(PostgreSQL)]
-    CAM[[Room IP Camera]]
+    DB[("PostgreSQL")]
+    CAM[["Room IP Camera"]]
 
-    TFE -- REST/JSON, cookie auth --> AUTH
-    TFE -- manage classes/rooms --> CLASS
-    TFE -- "Photo Attendance" (upload) --> ATT
-    TFE -- "Take Attendance" (one click) --> ATT
-    SFE -- signup/login, join class (3 photos) --> AUTH
-    SFE -- view classes/attendance --> CLASS
+    TFE -- "REST/JSON, cookie auth" --> AUTH
+    TFE -- "manage classes/rooms" --> CLASS
+    TFE -- "Photo Attendance (upload)" --> ATT
+    TFE -- "Take Attendance (one click)" --> ATT
+    SFE -- "signup/login, join class (3 photos)" --> AUTH
+    SFE -- "view classes/attendance" --> CLASS
 
     AUTH --> DB
     CLASS --> DB
     ATT --> DB
-    ATT -- multipart image + stored embeddings --> ModelSvc
+    ATT -- "multipart image + stored embeddings" --> ModelSvc
     ATT -- "GET snapshot" --> CAM
-    ModelSvc -- "{status, confidence}" --> ATT
+    ModelSvc -- "status and confidence" --> ATT
 ```
 
 **Why a separate model service?** Face recognition needs a heavy native/GPU stack (OpenCV, ONNX Runtime, InsightFace's RetinaFace + ArcFace model pack) that has nothing to do with the web app's request/response cycle. Keeping it as its own stateless HTTP service means the Node backend never touches ML dependencies — it just forwards image bytes and gets back `{status, confidence}` per student.
