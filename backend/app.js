@@ -17,6 +17,9 @@ app.use('/user', userRouter);
 import classRoute from './routes/class.route.js';
 app.use('/classes', classRoute)
 
+import studentRoute from './routes/student.route.js';
+app.use('/student', studentRoute)
+
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
 });

@@ -4,12 +4,14 @@ const useUserStore = create((set) => ({
     name: null,
     collegeName: null,
     email: null,
+    role: null,
 
     login: (user) =>
         set({
             name: user.name,
-            collegeName: user.collegeName,
+            collegeName: user.collegeName ?? null,
             email: user.email,
+            role: user.role || 'teacher',
         }),
 
     logout: () =>
@@ -17,6 +19,7 @@ const useUserStore = create((set) => ({
             name: null,
             collegeName: null,
             email: null,
+            role: null,
         }),
 }));
 

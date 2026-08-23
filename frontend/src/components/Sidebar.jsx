@@ -3,10 +3,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BookOpen, LayoutDashboard, Users, Settings, LogOut } from 'lucide-react';
 import axios from 'axios';
+import useUserStore from '../store/userStore';
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const role = useUserStore((state) => state.role);
 
   const handleLogout = async () => {
     try {
@@ -22,11 +24,15 @@ const Sidebar = () => {
     }
   };
 
-  const menuItems = [
-    { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { name: 'Students', icon: Users, path: '/students' },
-    { name: 'Settings', icon: Settings, path: '/settings' },
-  ];
+  const menuItems = role === 'student'
+    ? [
+        { name: 'Dashboard', icon: LayoutDashboard, path: '/student/dashboard' },
+      ]
+    : [
+        { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+        { name: 'Students', icon: Users, path: '/students' },
+        { name: 'Settings', icon: Settings, path: '/settings' },
+      ];
 
   return (
     <aside className="w-64 bg-slate-900/80 backdrop-blur-xl border-r border-slate-800 flex flex-col z-10 hidden md:flex h-screen sticky top-0">

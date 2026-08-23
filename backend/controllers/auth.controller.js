@@ -13,8 +13,13 @@ const auth = (req, res) => {
     });
     try {
         const decoded = jsonwebtoken.verify(token, secretKey);
-        // console.log(decoded)
-        res.json({ name: decoded.name, collegeName: decoded.collegeName, email: decoded.emails }).status(200);
+        const role = decoded.role || 'teacher';
+        res.status(200).json({
+            role,
+            name: decoded.name,
+            email: decoded.email,
+            collegeName: role === 'teacher' ? decoded.collegeName : undefined,
+        });
     } catch (err) {
         console.log(err);
         res.json({ status: 'error' }).status(400);

@@ -14,7 +14,9 @@ const joinClass = async (req, res) => {
     const rightBuffer = files['right'] ? files['right'][0].buffer : null;
     const centreBuffer = files['centre'] ? files['centre'][0].buffer : null;
 
-    const { name, classCode, email } = req.body;
+    const { classCode } = req.body;
+    const email = req.user.email;
+    const name = req.user.name;
     console.log(name, classCode, email);
 
     const formData = new FormData({ maxDataSize: 256 * 1024 * 1024 });
@@ -34,6 +36,12 @@ const joinClass = async (req, res) => {
 
     console.log("Photos received:", { left: !!leftBuffer, right: !!rightBuffer, centre: !!centreBuffer });
     try {
+        const classCheck = await db.query("select class_id from classes where class_id = $1", [classCode]);
+        if (classCheck.rowCount === 0) {
+            res.status(404).json({ status: 'error', error: 'Invalid class code' });
+            return;
+        }
+
         console.log("Here<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         let result;
         try {
@@ -47,10 +55,25 @@ const joinClass = async (req, res) => {
             res.status(400).json({ status: 'error', error: err.response.data.error })
             return;
         }
-        await db.query("insert into students (student_id,name, class_id, roll_no) values ($1, $2, $3, $4)", [email, name, classCode, 123])
-        await db.query("update classes set students = students + 1 where class_id = $1", [classCode]);
-        // await db.query("INSERT INTO attendance (student_id, class_id, date, status) VALUES ($1, $2, $3, $4) ON CONFLICT (student_id, class_id, date) DO UPDATE SET status = EXCLUDED.status", [email, classCode, new Date().toISOString().split('T')[0], "Absent"]);
-        await db.query("insert into embeddings (student_id, class_id, left_embeddings, right_embeddings, center_embeddings) values ($1, $2, $3, $4, $5)", [email, classCode, result.data.embeddings[0], result.data.embeddings[1], result.data.embeddings[2]]);
+
+        const existingEnrollment = await db.query(
+            "select 1 from students where student_id = $1 and class_id = $2",
+            [email, classCode]
+        );
+        if (existingEnrollment.rowCount === 0) {
+            await db.query("insert into students (student_id,name, class_id, roll_no) values ($1, $2, $3, $4)", [email, name, classCode, 123])
+            await db.query("update classes set students = students + 1 where class_id = $1", [classCode]);
+        }
+
+        await db.query(
+            `insert into embeddings (student_id, class_id, left_embeddings, right_embeddings, center_embeddings)
+             values ($1, $2, $3, $4, $5)
+             on conflict (student_id, class_id) do update set
+               left_embeddings = excluded.left_embeddings,
+               right_embeddings = excluded.right_embeddings,
+               center_embeddings = excluded.center_embeddings`,
+            [email, classCode, result.data.embeddings[0], result.data.embeddings[1], result.data.embeddings[2]]
+        );
         res.status(200).json({ status: 'success' })
     }
     catch (err) {

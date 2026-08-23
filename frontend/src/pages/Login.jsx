@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, Mail, Lock, ArrowRight, Camera, BookOpen, Upload, User, KeyRound, CheckCircle, AlertCircle } from 'lucide-react';
+import { GraduationCap, Mail, Lock, ArrowRight, Camera, BookOpen, User, AlertCircle } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import useUserStore from '../store/userStore';
@@ -14,11 +14,12 @@ const LoginPage = () => {
 
   const login = useUserStore((state) => state.login);
   const [activeTab, setActiveTab] = useState('student'); // 'student' or 'teacher'
+  const [studentMode, setStudentMode] = useState('login'); // 'login' or 'signup'
 
   useEffect(() => {
-    // localStorage.setItem('loggedIn', 'no')
     if (localStorage.getItem('loggedIn') === 'yess') {
-      navigate('/dashboard', { replace: true });
+      const role = localStorage.getItem('role');
+      navigate(role === 'student' ? '/student/dashboard' : '/dashboard', { replace: true });
     }
   }, []);
 
@@ -27,74 +28,67 @@ const LoginPage = () => {
       setActiveTab(tabParam);
     }
   }, [tabParam]);
-  const [images, setImages] = useState({
-    left: { file: null, preview: null },
-    right: { file: null, preview: null },
-    centre: { file: null, preview: null }
-  });
-  const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const fileInputRefs = {
-    left: useRef(null),
-    right: useRef(null),
-    centre: useRef(null)
-  };
 
-  const handleImageChange = (e, angle) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImages(prev => ({
-          ...prev,
-          [angle]: { file, preview: reader.result }
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const triggerFileInput = (angle) => {
-    fileInputRefs[angle].current.click();
-  };
-
-  const handleStudentSubmit = async (e) => {
+  const handleStudentLogin = async (e) => {
     e.preventDefault();
-    const { name, classCode, email } = e.target;
-    const formData = new FormData();
-    formData.append("name", name.value);
-    formData.append("classCode", classCode.value);
-    formData.append("email", email.value);
-
-    if (images.left.file) formData.append("left", images.left.file);
-    if (images.right.file) formData.append("right", images.right.file);
-    if (images.centre.file) formData.append("centre", images.centre.file);
-
-    // Add student submission logic here
     setIsLoading(true);
     setErrorMessage('');
     try {
-      const res = await axios.post('http://localhost:3000/user/join_class', formData,
+      const res = await axios.post('http://localhost:3000/user/student-login',
         {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true
-        });
+          email: e.target.email.value,
+          password: e.target.password.value,
+        },
+        { withCredentials: true }
+      );
       if (res.data.status === 'success') {
-        setSuccessMessage('Successfully joined the class!');
-        e.target.reset();
-        setImages({
-          left: { file: null, preview: null },
-          right: { file: null, preview: null },
-          centre: { file: null, preview: null }
-        });
-        setTimeout(() => setSuccessMessage(''), 3000);
+        login({ name: res.data.name, email: res.data.email, role: 'student' });
+        localStorage.setItem('loggedIn', 'yess');
+        localStorage.setItem('role', 'student');
+        navigate(classCodeParam ? `/student/dashboard?joinClassId=${classCodeParam}` : '/student/dashboard', { replace: true });
       } else {
-        setErrorMessage('Failed to join the class. Please try again.');
+        setErrorMessage(res.data.message || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
       console.error(err);
-      setErrorMessage(err.response?.data?.error || 'Error connecting to the server.');
+      setErrorMessage(err.response?.data?.message || 'Error connecting to the server. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const handleStudentSignup = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    const password = e.target.password.value;
+    const confirmPassword = e.target.confirmPassword.value;
+    if (password !== confirmPassword) {
+      setErrorMessage('Passwords do not match');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const res = await axios.post('http://localhost:3000/user/student-signup',
+        {
+          name: e.target.name.value,
+          email: e.target.email.value,
+          password,
+        },
+        { withCredentials: true }
+      );
+      if (res.data.status === 'success') {
+        login({ name: res.data.name, email: res.data.email, role: 'student' });
+        localStorage.setItem('loggedIn', 'yess');
+        localStorage.setItem('role', 'student');
+        navigate(classCodeParam ? `/student/dashboard?joinClassId=${classCodeParam}` : '/student/dashboard', { replace: true });
+      } else {
+        setErrorMessage(res.data.message || 'Sign up failed. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage(err.response?.data?.message || 'Error connecting to the server. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -123,6 +117,7 @@ const LoginPage = () => {
       setErrorMessage(err.response?.data?.error || err.response?.data?.message || 'Error connecting to the server. Please try again later.');
     } finally {
       localStorage.setItem('loggedIn', 'yess')
+      localStorage.setItem('role', 'teacher')
       setIsLoading(false);
     }
   }
@@ -173,7 +168,6 @@ const LoginPage = () => {
               onClick={() => {
                 setActiveTab('student');
                 setErrorMessage('');
-                setSuccessMessage('');
               }}
               className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'student'
                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
@@ -181,13 +175,12 @@ const LoginPage = () => {
                 }`}
             >
               <User size={16} className="mr-2" />
-              Student Join
+              Student
             </button>
             <button
               onClick={() => {
                 setActiveTab('teacher');
                 setErrorMessage('');
-                setSuccessMessage('');
               }}
               className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'teacher'
                 ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/25'
@@ -209,51 +202,42 @@ const LoginPage = () => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-white mb-2">Join Your Class</h2>
-                  <p className="text-slate-400 text-sm">Enter your details to register for attendance.</p>
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    {studentMode === 'login' ? 'Student Login' : 'Student Sign Up'}
+                  </h2>
+                  <p className="text-slate-400 text-sm">
+                    {studentMode === 'login' ? 'Log in to view your classes and attendance.' : 'Create an account to join classes and track attendance.'}
+                  </p>
                 </div>
 
-                <form className="space-y-5" onSubmit={handleStudentSubmit}>
+                {/* Login / Sign Up sub-switcher */}
+                <div className="flex p-1 bg-slate-800/50 rounded-lg mb-6 border border-slate-700/50 max-w-[220px] mx-auto">
+                  <button
+                    type="button"
+                    onClick={() => { setStudentMode('login'); setErrorMessage(''); }}
+                    className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-all duration-300 ${studentMode === 'login'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-400 hover:text-white'
+                      }`}
+                  >
+                    Log In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setStudentMode('signup'); setErrorMessage(''); }}
+                    className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-all duration-300 ${studentMode === 'signup'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-400 hover:text-white'
+                      }`}
+                  >
+                    Sign Up
+                  </button>
+                </div>
 
-                  {/* Photo Uploads */}
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    {['left', 'centre', 'right'].map((angle) => (
-                      <div key={angle} className="flex flex-col items-center">
-                        <div
-                          className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-800 border-2 border-dashed border-slate-600 flex items-center justify-center cursor-pointer overflow-hidden group transition-all duration-300 hover:border-blue-500"
-                          onClick={() => triggerFileInput(angle)}
-                        >
-                          {images[angle].preview ? (
-                            <>
-                              <img src={images[angle].preview} alt={`${angle} preview`} className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <Upload className="text-white" size={20} />
-                              </div>
-                            </>
-                          ) : (
-                            <div className="text-slate-400 flex flex-col items-center group-hover:text-blue-400 transition-colors">
-                              <Camera size={24} className="mb-1" />
-                              <span className="text-[10px] font-bold uppercase tracking-wider">{angle}</span>
-                            </div>
-                          )}
-                        </div>
-                        <input
-                          type="file"
-                          ref={fileInputRefs[angle]}
-                          onChange={(e) => handleImageChange(e, angle)}
-                          accept="image/*"
-                          className="hidden"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-[10px] text-slate-500 mb-6 text-center italic">
-                    * 3 angles required for high-accuracy AI facial recognition
-                  </p>
+                <form className="space-y-4" onSubmit={studentMode === 'login' ? handleStudentLogin : handleStudentSignup}>
 
-                  {/* Input Fields */}
-                  <div className="space-y-4">
+                  {studentMode === 'signup' && (
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Full Name</label>
                       <div className="relative">
@@ -269,39 +253,58 @@ const LoginPage = () => {
                         />
                       </div>
                     </div>
+                  )}
 
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Email Address</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Mail size={18} className="text-slate-500" />
+                      </div>
+                      <input
+                        type="email"
+                        name="email"
+                        className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                        placeholder="student@school.edu"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className={studentMode === 'signup' ? 'grid grid-cols-2 gap-4' : ''}>
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Email Address</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Password</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                          <User size={18} className="text-slate-500" />
+                          <Lock size={18} className="text-slate-500" />
                         </div>
                         <input
-                          type="email"
-                          name="email"
+                          name="password"
+                          type="password"
                           className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
-                          placeholder="[EMAIL_ADDRESS]"
+                          placeholder="••••••••"
                           required
                         />
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Class Code</label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                          <KeyRound size={18} className="text-slate-500" />
+                    {studentMode === 'signup' && (
+                      <div>
+                        <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Confirm Password</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <Lock size={18} className="text-slate-500" />
+                          </div>
+                          <input
+                            name="confirmPassword"
+                            type="password"
+                            className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500"
+                            placeholder="••••••••"
+                            required
+                          />
                         </div>
-                        <input
-                          value={classCodeParam ? classCodeParam : ''}
-                          type="text"
-                          name="classCode"
-                          className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block pl-11 p-3.5 transition-colors placeholder-slate-500 uppercase font-mono"
-                          placeholder="e.g. CS101-FALL"
-                          required
-                        />
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   <AnimatePresence>
@@ -330,7 +333,7 @@ const LoginPage = () => {
                       </div>
                     ) : (
                       <>
-                        Join Class
+                        {studentMode === 'login' ? 'Log In' : 'Create Account'}
                         <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
@@ -433,21 +436,6 @@ const LoginPage = () => {
           </AnimatePresence>
         </div>
       </div>
-
-      {/* Success Message Toast */}
-      <AnimatePresence>
-        {successMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-emerald-500/90 text-white px-6 py-3 rounded-full shadow-lg backdrop-blur-md flex items-center space-x-3 z-50 border border-emerald-400/30"
-          >
-            <CheckCircle size={20} />
-            <span className="font-medium">{successMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

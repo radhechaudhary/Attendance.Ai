@@ -56,6 +56,7 @@ const SignupPage = () => {
                     collegeName: collegeName
                 })
                 localStorage.setItem('loggedIn', 'yess')
+                localStorage.setItem('role', 'teacher')
                 navigate("/dashboard", { replace: true });
             }
         }
